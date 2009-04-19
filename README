@@ -1,5 +1,3 @@
-NB: this package works but is still very rough around the edges
-
 about
 =====
 for now, github-cli provides a script called gh-issues, that can be used to 
@@ -10,7 +8,7 @@ github-cli is written in python
 
 installation
 ============
-created a .ghrc file in your HOME directory with the following entries:
+create a .ghrc file in your HOME directory with the following entries:
 login = <your github login name>
 token = <your github token>
 
@@ -25,7 +23,7 @@ a script called gh-issues is installed in your system's bin/ directory
 usage
 =====
 from any directory that is part of a git working directory with an origin that
-is on GitHub, you can do this:
+is hosted on GitHub, you can do this:
 
 gh-issues list [open|closed]        # show all open (default) or closed issues
 gh-issues show <nr>                 # show issue number <nr>
