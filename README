@@ -5,6 +5,7 @@ about
 for now, github-cli provides a script called gh-issues, that can be used to 
 access all of GitHub's documented Issues API v2 functionality through your 
 command-line
+
 github-cli is written in python
 
 installation
