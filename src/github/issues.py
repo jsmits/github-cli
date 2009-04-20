@@ -71,7 +71,7 @@ def command_open():
     while not title:
         title = raw_input("title: ")
     body = []
-    entry = raw_input("body (press control-D on a new line to finish):\n")
+    entry = raw_input("body (control-D on a new line to save this issue):\n")
     while True:
         body.append(entry)
         try:
@@ -140,7 +140,7 @@ def command_edit(number):
     while not title:
         title = raw_input("title: ")
     body = []
-    entry = raw_input("body (press control-D on a new line to finish):\n")
+    entry = raw_input("body (control-D on a new line to save this issue):\n")
     while True:
         body.append(entry)
         try:
