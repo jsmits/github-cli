@@ -48,4 +48,5 @@ command                                     info
 ``gh-issues edit <nr>``                     edit issue <nr>
 ``gh-issues label add <label> <nr>``        add <label> to issue <nr>
 ``gh-issues label remove <label> <nr>``     remove <label> from issue <nr>
+``gh-issues -h``                            show help message
 =========================================== ==========================================

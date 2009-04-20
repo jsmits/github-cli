@@ -2,6 +2,7 @@ import os
 import sys
 import urllib
 import simplejson
+from optparse import OptionParser
 
 from github.utils import urlopen2
 from github.utils import get_remote_info, parse_config_file
@@ -31,7 +32,7 @@ def handle_unexpected_error(result):
     print "raw output from server:"
     print result
 
-def command_list(state='open', verbose=False):
+def command_list(state='open', verbose=False, **kwargs):
     url = "http://github.com/api/v2/json/issues/list/%s/%s/%s"
     user, repo = get_remote_info()
     page = urlopen2(url % (user, repo, state))
@@ -47,7 +48,7 @@ def command_list(state='open', verbose=False):
         else:
             print "no issues available"
             
-def command_show(number):
+def command_show(number, **kwargs):
     url = "http://github.com/api/v2/json/issues/show/%s/%s/%s"
     user, repo = get_remote_info()
     page = urlopen2(url % (user, repo, number))
@@ -63,7 +64,7 @@ def command_show(number):
         else:
             handle_unexpected_error(result)
             
-def command_open():
+def command_open(**kwargs):
     url = "http://github.com/api/v2/json/issues/open/%s/%s"
     config = parse_config_file()
     post_data = {'login': config['login'], 'token': config['token']}
@@ -96,7 +97,7 @@ def command_open():
         else:
             handle_unexpected_error(result)
     
-def command_close(number):
+def command_close(number, **kwargs):
     url = "http://github.com/api/v2/json/issues/close/%s/%s/%s"
     config = parse_config_file()
     post_data = {'login': config['login'], 'token': config['token']}
@@ -114,7 +115,7 @@ def command_close(number):
         else:
             handle_unexpected_error(result)
     
-def command_reopen(number):
+def command_reopen(number, **kwargs):
     url = "http://github.com/api/v2/json/issues/reopen/%s/%s/%s"
     config = parse_config_file()
     post_data = {'login': config['login'], 'token': config['token']}
@@ -132,7 +133,7 @@ def command_reopen(number):
         else:
             handle_unexpected_error(result)
             
-def command_edit(number):
+def command_edit(number, **kwargs):
     url = "http://github.com/api/v2/json/issues/edit/%s/%s/%s"
     config = parse_config_file()
     post_data = {'login': config['login'], 'token': config['token']}
@@ -165,7 +166,7 @@ def command_edit(number):
         else:
             handle_unexpected_error(result)
             
-def command_label(command, label, number):
+def command_label(command, label, number, **kwargs):
     url = "http://github.com/api/v2/json/issues/label/%s/%s/%s/%s/%s"
     config = parse_config_file()
     post_data = {'login': config['login'], 'token': config['token']}
@@ -188,10 +189,27 @@ def command_label(command, label, number):
             print "no labels found for issue #%s" % number
             
 def main():
-    from optparse import OptionParser
-    parser = OptionParser()
+    usage = """usage: %prog command [args] [options]
+    
+Examples:
+gh-issues list [open|closed]            # show all open (default) or closed issues
+gh-issues list -v [open|closed]         # same as above, but with issue details
+gh-issues                               # same as: gh-issues list
+gh-issues -v                            # same as: gh-issues list -v
+gh-issues -v | less                     # pipe through less command
+gh-issues show <nr>                     # show issue <nr>
+gh-issues open                          # create a new issue
+gh-issues close <nr>                    # close issue <nr>
+gh-issues reopen <nr>                   # reopen issue <nr>
+gh-issues edit <nr>                     # edit issue <nr>
+gh-issues label add <label> <nr>        # add <label> to issue <nr>
+gh-issues label remove <label> <nr>     # remove <label> from issue <nr>"""
+    description = """Description:
+gh-issues provides a command-line interface to GitHub's Issues API (v2)"""
+    parser = OptionParser(usage=usage, description=description)
     parser.add_option("-v", "--verbose", action="store_true", dest="verbose", 
-        default=False, help="show details (only implemented for list command) [default: False]")
+      default=False, help="show details (only for list commands)"\
+      " [default: False]")
     class CustomValues: pass
     (options, args) = parser.parse_args(values=CustomValues)
     kwargs = dict([(k, v) for k, v in options.__dict__.items() \
