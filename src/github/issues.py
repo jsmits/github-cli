@@ -198,10 +198,9 @@ def main():
         if not k.startswith("__")])
     if args:
         command = args[0]
-        globals()['command_%s' % command](*args[1:], **kwargs)
     else:
-        print "please provide a command"
-        sys.exit(1)
+        command = "list" # default
+    globals()['command_%s' % command](*args[1:], **kwargs)
         
 if __name__ == '__main__':
     main()
