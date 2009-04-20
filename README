@@ -26,6 +26,7 @@ from any directory that is part of a git working directory with an origin that
 is hosted on GitHub, you can do this:
 
 gh-issues list [open|closed]        # show all open (default) or closed issues
+gh-issues list -v [open|closed]     # same as above, but with issue details
 gh-issues show <nr>                 # show issue number <nr>
 gh-issues open                      # create a new issue
 gh-issues close <nr>                # close issue number <nr>
