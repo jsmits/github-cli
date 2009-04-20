@@ -6,19 +6,20 @@ import simplejson
 from github.utils import urlopen2
 from github.utils import get_remote_info, parse_config_file
 
-def pprint_issue(issue):
+def pprint_issue(issue, verbose=True):
     title = "#%s %s" % (issue['number'], issue['title'])
     print title
-    print "-" * len(title)
-    print "%s" % issue['body']
-    print "---"
-    print "state: %s" % issue['state']
-    print "%s votes" % issue['votes']
-    print "created: %s" % issue['created_at']
-    updated = issue.get('updated_at')
-    if updated and not updated == issue['created_at']:
-        print "updated: %s" % updated
-    print
+    if verbose:
+        print "-" * len(title)
+        print "%s" % issue['body']
+        print "---"
+        print "state: %s" % issue['state']
+        print "%s votes" % issue['votes']
+        print "created: %s" % issue['created_at']
+        updated = issue.get('updated_at')
+        if updated and not updated == issue['created_at']:
+            print "updated: %s" % updated
+        print
     
 def handle_error(result):
     for msg in result['error']:
@@ -30,7 +31,7 @@ def handle_unexpected_error(result):
     print "raw output from server:"
     print result
 
-def command_list(state='open'):
+def command_list(state='open', verbose=False):
     url = "http://github.com/api/v2/json/issues/list/%s/%s/%s"
     user, repo = get_remote_info()
     page = urlopen2(url % (user, repo, state))
@@ -38,9 +39,8 @@ def command_list(state='open'):
     page.close()
     issues = result.get('issues')
     if issues:
-        print
         for issue in issues:
-            pprint_issue(issue)
+            pprint_issue(issue, verbose)
     else:
         if result.get('error'):
             handle_error(result)
@@ -190,10 +190,15 @@ def command_label(command, label, number):
 def main():
     from optparse import OptionParser
     parser = OptionParser()
-    (options, args) = parser.parse_args()
+    parser.add_option("-v", "--verbose", action="store_true", dest="verbose", 
+        default=False, help="show details (only implemented for list command) [default: False]")
+    class CustomValues: pass
+    (options, args) = parser.parse_args(values=CustomValues)
+    kwargs = dict([(k, v) for k, v in options.__dict__.items() \
+        if not k.startswith("__")])
     if args:
         command = args[0]
-        globals()['command_%s' % command](*args[1:])
+        globals()['command_%s' % command](*args[1:], **kwargs)
     else:
         print "please provide a command"
         sys.exit(1)
