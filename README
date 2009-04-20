@@ -28,6 +28,8 @@ is hosted on GitHub, you can do this:
 gh-issues list [open|closed]        # show all open (default) or closed issues
 gh-issues list -v [open|closed]     # same as above, but with issue details
 gh-issues                           # same as: gh-issues list
+gh-issues -v                        # same as: gh-issues list -v
+gh-issues -v | less                 # pipe through less command
 gh-issues show <nr>                 # show issue number <nr>
 gh-issues open                      # create a new issue
 gh-issues close <nr>                # close issue number <nr>
