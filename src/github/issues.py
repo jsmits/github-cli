@@ -36,7 +36,11 @@ def command_list(state='open', verbose=False, **kwargs):
     url = "http://github.com/api/v2/json/issues/list/%s/%s/%s"
     user, repo = get_remote_info()
     url = url % (user, repo, state)
-    page = urlopen2(url)
+    try:
+        page = urlopen2(url)
+    except Exception, info:
+        print "error: fetching issue list failed (%s)" % info
+        sys.exit(1)
     result = simplejson.load(page)
     page.close()
     issues = result.get('issues')
@@ -53,7 +57,11 @@ def command_show(number, **kwargs):
     url = "http://github.com/api/v2/json/issues/show/%s/%s/%s"
     user, repo = get_remote_info()
     url = url % (user, repo, number)
-    page = urlopen2(url)
+    try:
+        page = urlopen2(url)
+    except Exception, info:
+        print "error: fetching issue failed (%s)" % info
+        sys.exit(1)
     result = simplejson.load(page)
     page.close()
     issue = result.get('issue')
@@ -108,7 +116,11 @@ def command_close(number, **kwargs):
     config = parse_config_file()
     post_data = {'login': config['login'], 'token': config['token']}
     user, repo = get_remote_info()
-    page = urlopen2(url % (user, repo, number), data=post_data)
+    try:
+        page = urlopen2(url % (user, repo, number), data=post_data)
+    except Exception, info:
+        print "error: closing issue %s failed (%s)" % (number, info)
+        sys.exit(1)
     result = simplejson.load(page)
     page.close()
     issue = result.get('issue')
@@ -126,7 +138,11 @@ def command_reopen(number, **kwargs):
     config = parse_config_file()
     post_data = {'login': config['login'], 'token': config['token']}
     user, repo = get_remote_info()
-    page = urlopen2(url % (user, repo, number), data=post_data)
+    try:
+        page = urlopen2(url % (user, repo, number), data=post_data)
+    except Exception, info:
+        print "error: reopening issue %s failed (%s)" % (number, info)
+        sys.exit(1)
     result = simplejson.load(page)
     page.close()
     issue = result.get('issue')
@@ -158,7 +174,11 @@ def command_edit(number, **kwargs):
     post_data.update({'title': title, 'body': body})
     print "saving issue, please wait..."
     user, repo = get_remote_info()
-    page = urlopen2(url % (user, repo, number), data=post_data)
+    try:
+        page = urlopen2(url % (user, repo, number), data=post_data)
+    except Exception, info:
+        print "error: editing issue %s failed (%s)" % (number, info)
+        sys.exit(1)
     result = simplejson.load(page)
     page.close()
     issue = result.get('issue')
@@ -180,7 +200,17 @@ def command_label(command, label, number, **kwargs):
     label = urllib.quote(label)
     label = label.replace(".", "%2E") # this is not done by urllib.quote
     url = url % (command, user, repo, label, number)
-    page = urlopen2(url, data=post_data)
+    try:
+        page = urlopen2(url, data=post_data)
+    except Exception, info:
+        if command == 'add':
+            msg = "error: adding a label to issue %s failed (%s)"
+        elif command == 'remove':
+            msg = "error: removing a label from issue %s failed (%s)"
+        else:
+            msg = "error: changing a label for issue %s failed (%s)"
+        print msg % (number, info)
+        sys.exit(1)
     result = simplejson.load(page)
     page.close()
     labels = result.get('labels')
