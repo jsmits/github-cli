@@ -80,15 +80,22 @@ def command_open(**kwargs):
     post_data = {'login': config['login'], 'token': config['token']}
     title = None
     while not title:
-        title = raw_input("title: ")
-    body = []
-    entry = raw_input("body (control-D on a new line to save this issue):\n")
-    while True:
-        body.append(entry)
         try:
+            title = raw_input("title (Ctrl-C to cancel): ")
+        except KeyboardInterrupt:
+            print
+            sys.exit(1)
+    body = []
+    try:
+        entry = raw_input("body (Ctrl-D on a new line to save):\n")
+        while True:
+            body.append(entry)
             entry = raw_input("")
-        except EOFError:
-            break
+    except KeyboardInterrupt:
+        print
+        sys.exit(1)
+    except EOFError:
+        pass
     body = '\r\n'.join(body)
     post_data.update({'title': title, 'body': body})
     user, repo = get_remote_info()
@@ -161,15 +168,22 @@ def command_edit(number, **kwargs):
     post_data = {'login': config['login'], 'token': config['token']}
     title = None
     while not title:
-        title = raw_input("title: ")
-    body = []
-    entry = raw_input("body (control-D on a new line to save this issue):\n")
-    while True:
-        body.append(entry)
         try:
+            title = raw_input("title (Ctrl-C to cancel): ")
+        except KeyboardInterrupt:
+            print
+            sys.exit(1)
+    body = []
+    try:
+        entry = raw_input("body (Ctrl-D on a new line to save):\n")
+        while True:
+            body.append(entry)
             entry = raw_input("")
-        except EOFError:
-            break
+    except KeyboardInterrupt:
+        print
+        sys.exit(1)
+    except EOFError:
+        pass
     body = '\r\n'.join(body)
     post_data.update({'title': title, 'body': body})
     print "saving issue, please wait..."
