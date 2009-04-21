@@ -31,6 +31,18 @@ def handle_unexpected_error(result):
     print "----------------------------"
     print "raw output from server:"
     print result
+    
+def validate_number(number, example):
+    msg = "error: please provide a number\nexample: %s" % example
+    if not number:
+        print msg
+        sys.exit(1)
+    else:
+        try:
+            int(number)
+        except:
+            print msg
+            sys.exit(1)
 
 def command_list(state='open', verbose=False, **kwargs):
     url = "http://github.com/api/v2/json/issues/list/%s/%s/%s"
@@ -53,7 +65,8 @@ def command_list(state='open', verbose=False, **kwargs):
         else:
             print "no issues available"
             
-def command_show(number, **kwargs):
+def command_show(number=None, **kwargs):
+    validate_number(number, example="gh-issues show 1")
     url = "http://github.com/api/v2/json/issues/show/%s/%s/%s"
     user, repo = get_remote_info()
     url = url % (user, repo, number)
@@ -118,7 +131,8 @@ def command_open(**kwargs):
         else:
             handle_unexpected_error(result)
     
-def command_close(number, **kwargs):
+def command_close(number=None, **kwargs):
+    validate_number(number, example="gh-issues close 1")
     url = "http://github.com/api/v2/json/issues/close/%s/%s/%s"
     config = parse_config_file()
     post_data = {'login': config['login'], 'token': config['token']}
@@ -140,7 +154,8 @@ def command_close(number, **kwargs):
         else:
             handle_unexpected_error(result)
     
-def command_reopen(number, **kwargs):
+def command_reopen(number=None, **kwargs):
+    validate_number(number, example="gh-issues reopen 1")
     url = "http://github.com/api/v2/json/issues/reopen/%s/%s/%s"
     config = parse_config_file()
     post_data = {'login': config['login'], 'token': config['token']}
@@ -162,7 +177,8 @@ def command_reopen(number, **kwargs):
         else:
             handle_unexpected_error(result)
             
-def command_edit(number, **kwargs):
+def command_edit(number=None, **kwargs):
+    validate_number(number, example="gh-issues edit 1")
     url = "http://github.com/api/v2/json/issues/edit/%s/%s/%s"
     config = parse_config_file()
     post_data = {'login': config['login'], 'token': config['token']}
