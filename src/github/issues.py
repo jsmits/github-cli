@@ -129,7 +129,7 @@ def command_open(**kwargs):
             sys.exit(1)
     body = []
     try:
-        entry = raw_input("body (Ctrl-D on a new line to save):\n")
+        entry = raw_input("body (Ctrl-D on a new line to submit):\n")
         while True:
             body.append(entry)
             entry = raw_input("")
@@ -141,11 +141,11 @@ def command_open(**kwargs):
     body = '\r\n'.join(body)
     post_data.update({'title': title, 'body': body})
     user, repo = get_remote_info()
-    print "saving issue, please wait..."
+    print "submitting issue, please wait..."
     try:
         page = urlopen2(url % (user, repo), data=post_data)
     except Exception, info:
-        print "error: issue not saved (%s)" % info
+        print "error: issue not submitted (%s)" % info
         sys.exit(1)
     result = simplejson.load(page)
     page.close()
@@ -153,7 +153,7 @@ def command_open(**kwargs):
     if issue:
         print
         pprint_issue(issue)
-        print "issue #%s saved successfully" % issue['number']
+        print "issue #%s submitted successfully" % issue['number']
     else:
         if result.get('error'):
             handle_error(result)
@@ -220,7 +220,7 @@ def command_edit(number=None, **kwargs):
             sys.exit(1)
     body = []
     try:
-        entry = raw_input("body (Ctrl-D on a new line to save):\n")
+        entry = raw_input("body (Ctrl-D on a new line to submit):\n")
         while True:
             body.append(entry)
             entry = raw_input("")
@@ -231,12 +231,12 @@ def command_edit(number=None, **kwargs):
         pass
     body = '\r\n'.join(body)
     post_data.update({'title': title, 'body': body})
-    print "saving issue, please wait..."
+    print "submitting issue, please wait..."
     user, repo = get_remote_info()
     try:
         page = urlopen2(url % (user, repo, number), data=post_data)
     except Exception, info:
-        print "error: editing issue %s failed (%s)" % (number, info)
+        print "error: submitting issue %s failed (%s)" % (number, info)
         sys.exit(1)
     result = simplejson.load(page)
     page.close()
@@ -244,7 +244,7 @@ def command_edit(number=None, **kwargs):
     if issue:
         print
         pprint_issue(issue)
-        print "issue #%s saved successfully" % issue['number']
+        print "issue #%s submitted successfully" % issue['number']
     else:
         if result.get('error'):
             handle_error(result)
@@ -283,6 +283,43 @@ def command_label(command, label, number, **kwargs):
         else:
             print "no labels found for issue #%s" % number
             
+def command_comment(number=None, **kwargs):
+    validate_number(number, example="gh-issues comment 1")
+    url = "http://github.com/api/v2/json/issues/comment/%s/%s/%s"
+    config = parse_config_file()
+    post_data = {'login': config['login'], 'token': config['token']}
+    comment = []
+    while not comment:
+        try:
+            entry = raw_input("comment (Ctrl-C to cancel; Ctrl-D on a new line to submit):\n")
+            while True:
+                comment.append(entry)
+                entry = raw_input("")
+        except KeyboardInterrupt:
+            print
+            sys.exit(1)
+        except EOFError:
+            break
+    comment = '\r\n'.join(comment)
+    post_data.update({'comment': comment})
+    print "submitting comment to issue #%s, please wait..." % number
+    user, repo = get_remote_info()
+    try:
+        page = urlopen2(url % (user, repo, number), data=post_data)
+    except Exception, info:
+        print "error: submitting comment to issue #%s failed (%s)" % (number, info)
+        sys.exit(1)
+    result = simplejson.load(page)
+    page.close()
+    returned_comment = result.get('comment')
+    if returned_comment:
+        print "comment for issue #%s submitted successfully" % number
+    else:
+        if result.get('error'):
+            handle_error(result)
+        else:
+            handle_unexpected_error(result)
+            
 def main():
     usage = """usage: %prog command [args] [options]
     
@@ -300,7 +337,8 @@ gh-issues edit <nr>                         # edit issue <nr>
 gh-issues label add <label> <nr>            # add <label> to issue <nr>
 gh-issues label remove <label> <nr>         # remove <label> from issue <nr>
 gh-issues search <term> [-s open|closed]    # search for all open (default) or closed issues containing <term>
-gh-issues search <term> [-s open|closed] -v # same as above, but with details"""
+gh-issues search <term> [-s open|closed] -v # same as above, but with details
+gh-issues comment <nr>                      # create a comment for issue <nr>"""
     description = """Description:
 gh-issues provides a command-line interface to GitHub's Issues API (v2)"""
     parser = OptionParser(usage=usage, description=description)

@@ -50,5 +50,6 @@ command                                         info
 ``gh-issues label remove <label> <nr>``         remove <label> from issue <nr>
 ``gh-issues search <term> [-s open|closed]``    search for all open (default) or closed issues containing <term>
 ``gh-issues search <term> [-s open|closed] -v`` same as above, but with details
+``gh-issues comment <nr>``                      create a comment for issue <nr>
 ``gh-issues -h``                                show help message
 =============================================== ================================================================
