@@ -33,20 +33,22 @@ usage
 from any directory that is part of a git working directory with an origin that
 is hosted on GitHub, you can do this:
 
-=========================================== ==========================================
-command                                     info
-=========================================== ==========================================
-``gh-issues list [open|closed]``            show all open (default) or closed issues
-``gh-issues list -v [open|closed]``         same as above, but with issue details
-``gh-issues``                               same as: ``gh-issues list``
-``gh-issues -v``                            same as: ``gh-issues list -v``
-``gh-issues -v | less``                     pipe through less command
-``gh-issues show <nr>``                     show issue <nr>
-``gh-issues open``                          create a new issue
-``gh-issues close <nr>``                    close issue <nr>
-``gh-issues reopen <nr>``                   reopen issue <nr>
-``gh-issues edit <nr>``                     edit issue <nr>
-``gh-issues label add <label> <nr>``        add <label> to issue <nr>
-``gh-issues label remove <label> <nr>``     remove <label> from issue <nr>
-``gh-issues -h``                            show help message
-=========================================== ==========================================
+=============================================== ================================================================
+command                                         info
+=============================================== ================================================================
+``gh-issues list [-s open|closed]``             show all open (default) or closed issues
+``gh-issues list -v [-s open|closed]``          same as above, but with issue details
+``gh-issues``                                   same as: ``gh-issues list``
+``gh-issues -v``                                same as: ``gh-issues list -v``
+``gh-issues -v | less``                         pipe through less command
+``gh-issues show <nr>``                         show issue <nr>
+``gh-issues open``                              create a new issue
+``gh-issues close <nr>``                        close issue <nr>
+``gh-issues reopen <nr>``                       reopen issue <nr>
+``gh-issues edit <nr>``                         edit issue <nr>
+``gh-issues label add <label> <nr>``            add <label> to issue <nr>
+``gh-issues label remove <label> <nr>``         remove <label> from issue <nr>
+``gh-issues search <term> [-s open|closed]``    search for all open (default) or closed issues containing <term>
+``gh-issues search <term> [-s open|closed] -v`` same as above, but with details
+``gh-issues -h``                                show help message
+=============================================== ================================================================

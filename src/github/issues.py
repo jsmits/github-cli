@@ -33,7 +33,7 @@ def handle_unexpected_error(result):
     print result
     
 def validate_number(number, example):
-    msg = "error: please provide a number\nexample: %s" % example
+    msg = "error: number required\nexample: %s" % example
     if not number:
         print msg
         sys.exit(1)
@@ -43,6 +43,35 @@ def validate_number(number, example):
         except:
             print msg
             sys.exit(1)
+
+def command_search(search_term=None, state='open', verbose=False, **kwargs):
+    if not search_term:
+        example = "gh-issues search experimental"
+        msg = "error: search term required\nexample: %s" % example
+        print msg
+        sys.exit(1)
+    url = "http://github.com/api/v2/json/issues/search/%s/%s/%s/%s"
+    user, repo = get_remote_info()
+    search_term_quoted = urllib.quote_plus(search_term)
+    search_term_quoted = search_term_quoted.replace(".", "%2E")
+    url = url % (user, repo, state, search_term_quoted)
+    try:
+        page = urlopen2(url)
+    except Exception, info:
+        print "error: search failed (%s)" % info
+        sys.exit(1)
+    result = simplejson.load(page)
+    page.close()
+    issues = result.get('issues')
+    if issues:
+        print "searching for '%s' returned %s issues:" % (search_term, len(issues))
+        for issue in issues:
+            pprint_issue(issue, verbose)
+    else:
+        if result.get('error'):
+            handle_error(result)
+        else:
+            print "no issues found while searching for '%s'" % search_term
 
 def command_list(state='open', verbose=False, **kwargs):
     url = "http://github.com/api/v2/json/issues/list/%s/%s/%s"
@@ -258,24 +287,30 @@ def main():
     usage = """usage: %prog command [args] [options]
     
 Examples:
-gh-issues list [open|closed]            # show all open (default) or closed issues
-gh-issues list -v [open|closed]         # same as above, but with issue details
-gh-issues                               # same as: gh-issues list
-gh-issues -v                            # same as: gh-issues list -v
-gh-issues -v | less                     # pipe through less command
-gh-issues show <nr>                     # show issue <nr>
-gh-issues open                          # create a new issue
-gh-issues close <nr>                    # close issue <nr>
-gh-issues reopen <nr>                   # reopen issue <nr>
-gh-issues edit <nr>                     # edit issue <nr>
-gh-issues label add <label> <nr>        # add <label> to issue <nr>
-gh-issues label remove <label> <nr>     # remove <label> from issue <nr>"""
+gh-issues list [-s open|closed]             # show all open (default) or closed issues
+gh-issues list [-s open|closed] -v          # same as above, but with issue details
+gh-issues                                   # same as: gh-issues list
+gh-issues -v                                # same as: gh-issues list -v
+gh-issues -v | less                         # pipe through less command
+gh-issues show <nr>                         # show issue <nr>
+gh-issues open                              # create a new issue
+gh-issues close <nr>                        # close issue <nr>
+gh-issues reopen <nr>                       # reopen issue <nr>
+gh-issues edit <nr>                         # edit issue <nr>
+gh-issues label add <label> <nr>            # add <label> to issue <nr>
+gh-issues label remove <label> <nr>         # remove <label> from issue <nr>
+gh-issues search <term> [-s open|closed]    # search for all open (default) or closed issues containing <term>
+gh-issues search <term> [-s open|closed] -v # same as above, but with details"""
     description = """Description:
 gh-issues provides a command-line interface to GitHub's Issues API (v2)"""
     parser = OptionParser(usage=usage, description=description)
     parser.add_option("-v", "--verbose", action="store_true", dest="verbose", 
-      default=False, help="show details (only for list commands)"\
-      " [default: False]")
+      default=False, help="show issue details (only for list and search "\
+        "commands) [default: False]")
+    parser.add_option("-s", "--state", action="store", dest="state", 
+        type='choice', choices=['open', 'closed'], default='open', 
+        help="specify state (only for list and search commands)"\
+        " [default: open]")
     class CustomValues: pass
     (options, args) = parser.parse_args(values=CustomValues)
     kwargs = dict([(k, v) for k, v in options.__dict__.items() \
@@ -284,7 +319,13 @@ gh-issues provides a command-line interface to GitHub's Issues API (v2)"""
         command = args[0]
     else:
         command = "list" # default
-    globals()['command_%s' % command](*args[1:], **kwargs)
+    if command == 'search':
+        search_term = " ".join(args[1:])
+        args = (args[0], search_term)
+    try:
+        globals()['command_%s' % command](*args[1:], **kwargs)
+    except KeyError:
+        print "command '%s' not implemented" % command
         
 if __name__ == '__main__':
     main()
