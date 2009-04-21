@@ -35,7 +35,8 @@ def handle_unexpected_error(result):
 def command_list(state='open', verbose=False, **kwargs):
     url = "http://github.com/api/v2/json/issues/list/%s/%s/%s"
     user, repo = get_remote_info()
-    page = urlopen2(url % (user, repo, state))
+    url = url % (user, repo, state)
+    page = urlopen2(url)
     result = simplejson.load(page)
     page.close()
     issues = result.get('issues')
@@ -51,7 +52,8 @@ def command_list(state='open', verbose=False, **kwargs):
 def command_show(number, **kwargs):
     url = "http://github.com/api/v2/json/issues/show/%s/%s/%s"
     user, repo = get_remote_info()
-    page = urlopen2(url % (user, repo, number))
+    url = url % (user, repo, number)
+    page = urlopen2(url)
     result = simplejson.load(page)
     page.close()
     issue = result.get('issue')
@@ -81,9 +83,13 @@ def command_open(**kwargs):
             break
     body = '\r\n'.join(body)
     post_data.update({'title': title, 'body': body})
-    print "saving issue, please wait..."
     user, repo = get_remote_info()
-    page = urlopen2(url % (user, repo), data=post_data)
+    print "saving issue, please wait..."
+    try:
+        page = urlopen2(url % (user, repo), data=post_data)
+    except Exception, info:
+        print "error: issue not saved (%s)" % info
+        sys.exit(1)
     result = simplejson.load(page)
     page.close()
     issue = result.get('issue')

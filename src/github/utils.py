@@ -4,6 +4,7 @@ from urllib2 import build_opener, HTTPCookieProcessor, Request
 from urllib import urlencode
 from subprocess import Popen, PIPE
 import re
+import urllib2
 
 opener = build_opener(HTTPCookieProcessor)
 
@@ -12,7 +13,12 @@ def urlopen2(url, data=None, user_agent='github-cli'):
     if hasattr(data, "__iter__"):
         data = urlencode(data)
     headers = {'User-Agent' : user_agent}
-    return opener.open(Request(url, data, headers))
+    try:
+        return opener.open(Request(url, data, headers))
+    except urllib2.HTTPError:
+        raise Exception("server problem")
+    except urllib2.URLError:
+        raise Exception("connection problem")
     
 def get_remote_info(name='origin'):
     command = "git remote -v"
@@ -58,8 +64,8 @@ def parse_config_file():
         validate_parsed_rc(output)
         return output
     except IOError, info:
-        print "could not open %s (%s)" % (file_name, info)
-        sys.exit(1)
+        print "could not open config file '%s' (%s)" % (file_name, info)
+        return {}
         
 def validate_parsed_rc(data):
     required_keys = ['login', 'token']
