@@ -73,7 +73,7 @@ def validate_parsed_rc(data):
         try:
             data[key]
         except KeyError:
-            print "rc file should have a '%s' entry" % key
+            print "config file should have a '%s' entry" % key
             sys.exit(1)
 
         
