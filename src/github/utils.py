@@ -8,8 +8,14 @@ import urllib2
 
 opener = build_opener(HTTPCookieProcessor)
 
-def urlopen2(url, data=None, user_agent='github-cli'):
-    """opens the url"""
+def urlopen2(url, data=None, auth=False, user_agent='github-cli'):
+    if auth:
+        config = get_config()
+        auth_dict = {'login': config['user'], 'token': config['token']}
+        if data:
+            data.update(auth_dict)
+        else:
+            data = auth_dict 
     if hasattr(data, "__iter__"):
         data = urlencode(data)
     headers = {'User-Agent' : user_agent}

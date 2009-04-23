@@ -5,7 +5,7 @@ import simplejson
 from optparse import OptionParser
 
 from github.utils import urlopen2
-from github.utils import get_remote_info, get_config
+from github.utils import get_remote_info
 
 def pprint_issue(issue, verbose=True):
     title = "#%s %s" % (issue['number'], issue['title'])
@@ -118,8 +118,6 @@ def command_show(number=None, **kwargs):
             
 def command_open(**kwargs):
     url = "http://github.com/api/v2/json/issues/open/%s/%s"
-    config = get_config()
-    post_data = {'login': config['user'], 'token': config['token']}
     title = None
     while not title:
         try:
@@ -139,11 +137,11 @@ def command_open(**kwargs):
     except EOFError:
         pass
     body = '\r\n'.join(body)
-    post_data.update({'title': title, 'body': body})
+    post_data = {'title': title, 'body': body}
     user, repo = get_remote_info()
     print "submitting issue, please wait..."
     try:
-        page = urlopen2(url % (user, repo), data=post_data)
+        page = urlopen2(url % (user, repo), data=post_data, auth=True)
     except Exception, info:
         print "error: issue not submitted (%s)" % info
         sys.exit(1)
@@ -163,11 +161,9 @@ def command_open(**kwargs):
 def command_close(number=None, **kwargs):
     validate_number(number, example="gh-issues close 1")
     url = "http://github.com/api/v2/json/issues/close/%s/%s/%s"
-    config = get_config()
-    post_data = {'login': config['user'], 'token': config['token']}
     user, repo = get_remote_info()
     try:
-        page = urlopen2(url % (user, repo, number), data=post_data)
+        page = urlopen2(url % (user, repo, number), auth=True)
     except Exception, info:
         print "error: closing issue %s failed (%s)" % (number, info)
         sys.exit(1)
@@ -186,11 +182,9 @@ def command_close(number=None, **kwargs):
 def command_reopen(number=None, **kwargs):
     validate_number(number, example="gh-issues reopen 1")
     url = "http://github.com/api/v2/json/issues/reopen/%s/%s/%s"
-    config = get_config()
-    post_data = {'login': config['user'], 'token': config['token']}
     user, repo = get_remote_info()
     try:
-        page = urlopen2(url % (user, repo, number), data=post_data)
+        page = urlopen2(url % (user, repo, number), auth=True)
     except Exception, info:
         print "error: reopening issue %s failed (%s)" % (number, info)
         sys.exit(1)
@@ -209,8 +203,6 @@ def command_reopen(number=None, **kwargs):
 def command_edit(number=None, **kwargs):
     validate_number(number, example="gh-issues edit 1")
     url = "http://github.com/api/v2/json/issues/edit/%s/%s/%s"
-    config = get_config()
-    post_data = {'login': config['user'], 'token': config['token']}
     title = None
     while not title:
         try:
@@ -230,11 +222,11 @@ def command_edit(number=None, **kwargs):
     except EOFError:
         pass
     body = '\r\n'.join(body)
-    post_data.update({'title': title, 'body': body})
+    post_data = {'title': title, 'body': body}
     print "submitting issue, please wait..."
     user, repo = get_remote_info()
     try:
-        page = urlopen2(url % (user, repo, number), data=post_data)
+        page = urlopen2(url % (user, repo, number), data=post_data, auth=True)
     except Exception, info:
         print "error: submitting issue %s failed (%s)" % (number, info)
         sys.exit(1)
@@ -253,14 +245,12 @@ def command_edit(number=None, **kwargs):
             
 def command_label(command, label, number, **kwargs):
     url = "http://github.com/api/v2/json/issues/label/%s/%s/%s/%s/%s"
-    config = get_config()
-    post_data = {'login': config['user'], 'token': config['token']}
     user, repo = get_remote_info()
     label = urllib.quote(label)
     label = label.replace(".", "%2E") # this is not done by urllib.quote
     url = url % (command, user, repo, label, number)
     try:
-        page = urlopen2(url, data=post_data)
+        page = urlopen2(url, auth=True)
     except Exception, info:
         if command == 'add':
             msg = "error: adding a label to issue %s failed (%s)"
@@ -286,8 +276,6 @@ def command_label(command, label, number, **kwargs):
 def command_comment(number=None, **kwargs):
     validate_number(number, example="gh-issues comment 1")
     url = "http://github.com/api/v2/json/issues/comment/%s/%s/%s"
-    config = get_config()
-    post_data = {'login': config['user'], 'token': config['token']}
     comment = []
     while not comment:
         try:
@@ -301,11 +289,11 @@ def command_comment(number=None, **kwargs):
         except EOFError:
             break
     comment = '\r\n'.join(comment)
-    post_data.update({'comment': comment})
+    post_data = {'comment': comment}
     print "submitting comment to issue #%s, please wait..." % number
     user, repo = get_remote_info()
     try:
-        page = urlopen2(url % (user, repo, number), data=post_data)
+        page = urlopen2(url % (user, repo, number), data=post_data, auth=True)
     except Exception, info:
         print "error: submitting comment to issue #%s failed (%s)" % (number, info)
         sys.exit(1)
