@@ -5,7 +5,7 @@ import simplejson
 from optparse import OptionParser
 
 from github.utils import urlopen2
-from github.utils import get_remote_info, parse_config_file
+from github.utils import get_remote_info, get_config
 
 def pprint_issue(issue, verbose=True):
     title = "#%s %s" % (issue['number'], issue['title'])
@@ -118,8 +118,8 @@ def command_show(number=None, **kwargs):
             
 def command_open(**kwargs):
     url = "http://github.com/api/v2/json/issues/open/%s/%s"
-    config = parse_config_file()
-    post_data = {'login': config['login'], 'token': config['token']}
+    config = get_config()
+    post_data = {'login': config['user'], 'token': config['token']}
     title = None
     while not title:
         try:
@@ -163,8 +163,8 @@ def command_open(**kwargs):
 def command_close(number=None, **kwargs):
     validate_number(number, example="gh-issues close 1")
     url = "http://github.com/api/v2/json/issues/close/%s/%s/%s"
-    config = parse_config_file()
-    post_data = {'login': config['login'], 'token': config['token']}
+    config = get_config()
+    post_data = {'login': config['user'], 'token': config['token']}
     user, repo = get_remote_info()
     try:
         page = urlopen2(url % (user, repo, number), data=post_data)
@@ -186,8 +186,8 @@ def command_close(number=None, **kwargs):
 def command_reopen(number=None, **kwargs):
     validate_number(number, example="gh-issues reopen 1")
     url = "http://github.com/api/v2/json/issues/reopen/%s/%s/%s"
-    config = parse_config_file()
-    post_data = {'login': config['login'], 'token': config['token']}
+    config = get_config()
+    post_data = {'login': config['user'], 'token': config['token']}
     user, repo = get_remote_info()
     try:
         page = urlopen2(url % (user, repo, number), data=post_data)
@@ -209,8 +209,8 @@ def command_reopen(number=None, **kwargs):
 def command_edit(number=None, **kwargs):
     validate_number(number, example="gh-issues edit 1")
     url = "http://github.com/api/v2/json/issues/edit/%s/%s/%s"
-    config = parse_config_file()
-    post_data = {'login': config['login'], 'token': config['token']}
+    config = get_config()
+    post_data = {'login': config['user'], 'token': config['token']}
     title = None
     while not title:
         try:
@@ -253,8 +253,8 @@ def command_edit(number=None, **kwargs):
             
 def command_label(command, label, number, **kwargs):
     url = "http://github.com/api/v2/json/issues/label/%s/%s/%s/%s/%s"
-    config = parse_config_file()
-    post_data = {'login': config['login'], 'token': config['token']}
+    config = get_config()
+    post_data = {'login': config['user'], 'token': config['token']}
     user, repo = get_remote_info()
     label = urllib.quote(label)
     label = label.replace(".", "%2E") # this is not done by urllib.quote
@@ -286,8 +286,8 @@ def command_label(command, label, number, **kwargs):
 def command_comment(number=None, **kwargs):
     validate_number(number, example="gh-issues comment 1")
     url = "http://github.com/api/v2/json/issues/comment/%s/%s/%s"
-    config = parse_config_file()
-    post_data = {'login': config['login'], 'token': config['token']}
+    config = get_config()
+    post_data = {'login': config['user'], 'token': config['token']}
     comment = []
     while not comment:
         try:

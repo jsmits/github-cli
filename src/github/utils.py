@@ -44,37 +44,30 @@ def get_remote_info(name='origin'):
     print "aborting script"
     sys.exit(1)
     
-def parse_config_file():
-    home_dir = os.path.expanduser("~")
-    rc_file = ".ghrc"
-    file_name = os.path.join(home_dir, rc_file)
-    try:
-        f = open(file_name, 'r')
-        output = {}
-        for line in f.readlines():
-            line = line.strip()
-            try:
-                key, value = tuple(line.split("="))
-                key = key.strip()
-                value = value.strip()
-                output.update({key: value})
-            except:
-                pass
-        f.close()
-        validate_parsed_rc(output)
-        return output
-    except IOError, info:
-        print "could not open config file '%s' (%s)" % (file_name, info)
-        return {}
-        
-def validate_parsed_rc(data):
-    required_keys = ['login', 'token']
+def get_config():
+    required_keys = ["user", "token"]
+    config = {}
     for key in required_keys:
-        try:
-            data[key]
-        except KeyError:
-            print "config file should have a '%s' entry" % key
+        command = "git config --global github.%s" % key
+        stdout, stderr = Popen(command, shell=True, stdin=PIPE, stdout=PIPE, 
+            stderr=PIPE).communicate()
+        if stderr:
+            for line in stderr.splitlines():
+                print line
             sys.exit(1)
+        if stdout:
+            value = stdout.strip()
+            config[key] = value
+        else:
+            alt_help_names = {'user': 'username'}
+            help_name = alt_help_names.get(key, key)
+            print "error: required GitHub entry '%s' not found in global git config" % key
+            print "please add it to the global git config by doing this:"
+            print
+            print "git config --global github.%s <your GitHub %s>" % (key, help_name)
+            sys.exit(1)
+    return config
+        
 
         
         

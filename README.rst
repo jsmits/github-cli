@@ -2,7 +2,7 @@ GitHub API - command-line interface
 ===================================
 about
 -----
-for now, github-cli provides a script called gh-issues, that can be used to 
+for now, github-cli provides a script called ``gh-issues``, that can be used to 
 access all of GitHub's documented Issues API v2 functionality from your 
 command-line
 
@@ -10,14 +10,6 @@ github-cli is written in python
 
 installation
 ------------
-
-create a .ghrc file in your $HOME directory with the following entries:
-
-``login = <your github login name>``
-
-``token = <your github token>``
-
-
 you can install github-cli by:
 
 ``python setup.py install``
@@ -26,7 +18,18 @@ or
 
 ``sudo python setup.py install``
 
-a script called gh-issues will be installed in your system's bin/ directory
+a script called ``gh-issues`` will be installed in your system's ``bin/`` directory
+
+configuration
+-------------
+make sure your GitHub username and API token are added to the global git 
+config:
+
+``git config --global github.user <your GitHub username>``
+
+``git config --global github.token <your GitHub API token>``
+
+you can find the username and API token on your GitHub's account page
 
 usage
 -----
