@@ -4,8 +4,8 @@ import urllib
 import simplejson
 from optparse import OptionParser
 
-from github.utils import urlopen2
-from github.utils import get_remote_info
+from github.utils import urlopen2, get_remote_info, create_edit_issue, \
+    create_comment
 
 def pprint_issue(issue, verbose=True):
     title = "#%s %s" % (issue['number'], issue['title'])
@@ -94,8 +94,7 @@ def command_list(state='open', verbose=False, **kwargs):
         else:
             print "no issues available"
             
-def command_show(number=None, **kwargs):
-    validate_number(number, example="gh-issues show 1")
+def get_issue_by_number(number):
     url = "http://github.com/api/v2/json/issues/show/%s/%s/%s"
     user, repo = get_remote_info()
     url = url % (user, repo, number)
@@ -108,36 +107,23 @@ def command_show(number=None, **kwargs):
     page.close()
     issue = result.get('issue')
     if issue:
-        print
-        pprint_issue(issue)
+        return issue
     else:
         if result.get('error'):
             handle_error(result)
         else:
-            handle_unexpected_error(result)
+            handle_unexpected_error(result) 
+        sys.exit(1)     
+            
+def command_show(number=None, **kwargs):
+    validate_number(number, example="gh-issues show 1")
+    issue = get_issue_by_number(number)
+    print
+    pprint_issue(issue)
             
 def command_open(**kwargs):
     url = "http://github.com/api/v2/json/issues/open/%s/%s"
-    title = None
-    while not title:
-        try:
-            title = raw_input("title (Ctrl-C to cancel): ")
-        except KeyboardInterrupt:
-            print
-            sys.exit(1)
-    body = []
-    try:
-        entry = raw_input("body (Ctrl-D on a new line to submit):\n")
-        while True:
-            body.append(entry)
-            entry = raw_input("")
-    except KeyboardInterrupt:
-        print
-        sys.exit(1)
-    except EOFError:
-        pass
-    body = '\r\n'.join(body)
-    post_data = {'title': title, 'body': body}
+    post_data = create_edit_issue()
     user, repo = get_remote_info()
     print "submitting issue, please wait..."
     try:
@@ -203,26 +189,13 @@ def command_reopen(number=None, **kwargs):
 def command_edit(number=None, **kwargs):
     validate_number(number, example="gh-issues edit 1")
     url = "http://github.com/api/v2/json/issues/edit/%s/%s/%s"
-    title = None
-    while not title:
-        try:
-            title = raw_input("title (Ctrl-C to cancel): ")
-        except KeyboardInterrupt:
-            print
-            sys.exit(1)
-    body = []
-    try:
-        entry = raw_input("body (Ctrl-D on a new line to submit):\n")
-        while True:
-            body.append(entry)
-            entry = raw_input("")
-    except KeyboardInterrupt:
-        print
+    gh_issue = get_issue_by_number(number)
+    output = {'title': gh_issue['title'], 'body': gh_issue['body']}
+    post_data = create_edit_issue(gh_issue)
+    if post_data['title'] == output['title'] and \
+            post_data['body'].splitlines() == output['body'].splitlines():
+        print "no changes found"
         sys.exit(1)
-    except EOFError:
-        pass
-    body = '\r\n'.join(body)
-    post_data = {'title': title, 'body': body}
     print "submitting issue, please wait..."
     user, repo = get_remote_info()
     try:
@@ -276,19 +249,8 @@ def command_label(command, label, number, **kwargs):
 def command_comment(number=None, **kwargs):
     validate_number(number, example="gh-issues comment 1")
     url = "http://github.com/api/v2/json/issues/comment/%s/%s/%s"
-    comment = []
-    while not comment:
-        try:
-            entry = raw_input("comment (Ctrl-C to cancel; Ctrl-D on a new line to submit):\n")
-            while True:
-                comment.append(entry)
-                entry = raw_input("")
-        except KeyboardInterrupt:
-            print
-            sys.exit(1)
-        except EOFError:
-            break
-    comment = '\r\n'.join(comment)
+    gh_issue = get_issue_by_number(number)
+    comment = create_comment(gh_issue)
     post_data = {'comment': comment}
     print "submitting comment to issue #%s, please wait..." % number
     user, repo = get_remote_info()

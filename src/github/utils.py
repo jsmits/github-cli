@@ -2,9 +2,11 @@ import os
 import sys
 from urllib2 import build_opener, HTTPCookieProcessor, Request
 from urllib import urlencode
-from subprocess import Popen, PIPE
+from subprocess import Popen, PIPE, STDOUT
 import re
 import urllib2
+import tempfile
+import subprocess
 
 opener = build_opener(HTTPCookieProcessor)
 
@@ -73,6 +75,74 @@ def get_config():
             print "git config --global github.%s <your GitHub %s>" % (key, help_name)
             sys.exit(1)
     return config
+    
+def edit_text(text):
+    editor = os.getenv('EDITOR', 'vi')
+  
+    f = tempfile.NamedTemporaryFile()
+    f.write(text)
+    f.flush()
+    
+    command = "%s %s" % (editor, f.name)
+    ret = subprocess.call(command, shell=True)
+    if ret != 0:
+        print "error: editor command failed"
+        sys.exit(1)
+  
+    changed_text = open(f.name).read()
+    f.close()
+    stripcomment_re = re.compile(r'^#.*$', re.MULTILINE)
+    return stripcomment_re.sub('', changed_text).strip()
+    
+def create_edit_issue(issue=None):
+    main_text = """# Please explain the issue. 
+# The first line will be used as the title.
+# Lines starting with `#` will be ignored."""
+    if issue:
+        issue['main'] = main_text
+        template = """%(title)s
+%(body)s
+%(main)s
+#
+#    number:  %(number)s
+#      user:  %(user)s
+#     votes:  %(votes)s
+#     state:  %(state)s
+#   created:  %(created_at)s""" % issue
+    else:
+        template = "\n%s" % main_text
+    text = edit_text(template)
+    if not text:
+        print "error: can not submit an empty issue"
+        sys.exit(1)
+    lines = text.splitlines()
+    title = lines[0]
+    body = "\n".join(lines[1:]).strip()
+    return {'title': title, 'body': body}
+    
+def create_comment(issue):
+    inp = """
+# Please enter a comment.
+# Lines starting with `#` will be ignored.
+#
+#    number:  %(number)s
+#      user:  %(user)s
+#     votes:  %(votes)s
+#     state:  %(state)s
+#   created:  %(created_at)s""" % issue
+    out = edit_text(inp)
+    if not out:
+        print "error: can not submit an empty comment"
+        sys.exit(1)
+    lines = out.splitlines()
+    comment = "\n".join(lines).strip()
+    return comment
+        
+    
+    
+    
+    
+    
         
 
         
