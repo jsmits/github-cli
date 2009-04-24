@@ -26,12 +26,6 @@ def handle_error(result):
     for msg in result['error']:
         print "error: %s" % msg['error']
         
-def handle_unexpected_error(result):
-    print "an unexpected error occurred"
-    print "----------------------------"
-    print "raw output from server:"
-    print result
-    
 def validate_number(number, example):
     msg = "error: number required\nexample: %s" % example
     if not number:
@@ -44,253 +38,146 @@ def validate_number(number, example):
             print msg
             sys.exit(1)
 
-def command_search(search_term=None, state='open', verbose=False, **kwargs):
-    if not search_term:
-        example = "gh-issues search experimental"
-        msg = "error: search term required\nexample: %s" % example
-        print msg
-        sys.exit(1)
-    url = "http://github.com/api/v2/json/issues/search/%s/%s/%s/%s"
-    user, repo = get_remote_info()
-    search_term_quoted = urllib.quote_plus(search_term)
-    search_term_quoted = search_term_quoted.replace(".", "%2E")
-    url = url % (user, repo, state, search_term_quoted)
+def get_key(data, key):
     try:
-        page = urlopen2(url)
-    except Exception, info:
-        print "error: search failed (%s)" % info
-        sys.exit(1)
-    result = simplejson.load(page)
-    page.close()
-    issues = result.get('issues')
-    if issues:
-        print "searching for '%s' returned %s issues:" % (search_term, len(issues))
-        for issue in issues:
-            pprint_issue(issue, verbose)
-    else:
-        if result.get('error'):
-            handle_error(result)
-        else:
-            print "no issues found while searching for '%s'" % search_term
+        return data[key]
+    except KeyError:
+        raise Exception("unexpected failure")
 
-def command_list(state='open', verbose=False, **kwargs):
-    url = "http://github.com/api/v2/json/issues/list/%s/%s/%s"
-    user, repo = get_remote_info()
-    url = url % (user, repo, state)
-    try:
-        page = urlopen2(url)
-    except Exception, info:
-        print "error: fetching issue list failed (%s)" % info
-        sys.exit(1)
-    result = simplejson.load(page)
-    page.close()
-    issues = result.get('issues')
-    if issues:
+class Commands(object):
+    
+    def __init__(self, user, repo):
+        self.user = user
+        self.repo = repo
+        self.url_template = "http://github.com/api/v2/json/issues/%s/%s/%s"
+        
+    def search(self, search_term=None, state='open', verbose=False, **kwargs):
+        if not search_term:
+            example = "gh-issues search experimental"
+            msg = "error: search term required\nexample: %s" % example
+            print msg
+            sys.exit(1)
+        search_term_quoted = urllib.quote_plus(search_term)
+        search_term_quoted = search_term_quoted.replace(".", "%2E")
+        result = self.__submit('search', search_term, state)
+        issues = get_key(result, 'issues')
+        print "searching for '%s' returned %s issues" % (search_term, len(issues))
         for issue in issues:
             pprint_issue(issue, verbose)
-    else:
-        if result.get('error'):
-            handle_error(result)
+        
+    def list(self, state='open', verbose=False, **kwargs):
+        result = self.__submit('list', state)
+        issues = get_key(result, 'issues')
+        if issues:
+            for issue in issues:
+                pprint_issue(issue, verbose)
         else:
             print "no issues available"
-            
-def get_issue_by_number(number):
-    url = "http://github.com/api/v2/json/issues/show/%s/%s/%s"
-    user, repo = get_remote_info()
-    url = url % (user, repo, number)
-    try:
-        page = urlopen2(url)
-    except Exception, info:
-        print "error: fetching issue failed (%s)" % info
-        sys.exit(1)
-    result = simplejson.load(page)
-    page.close()
-    issue = result.get('issue')
-    if issue:
-        return issue
-    else:
-        if result.get('error'):
-            handle_error(result)
-        else:
-            handle_unexpected_error(result) 
-        sys.exit(1)     
-            
-def command_show(number=None, **kwargs):
-    validate_number(number, example="gh-issues show 1")
-    issue = get_issue_by_number(number)
-    print
-    pprint_issue(issue)
-            
-def command_open(**kwargs):
-    url = "http://github.com/api/v2/json/issues/open/%s/%s"
-    post_data = create_edit_issue()
-    user, repo = get_remote_info()
-    print "submitting issue, please wait..."
-    try:
-        page = urlopen2(url % (user, repo), data=post_data, auth=True)
-    except Exception, info:
-        print "error: issue not submitted (%s)" % info
-        sys.exit(1)
-    result = simplejson.load(page)
-    page.close()
-    issue = result.get('issue')
-    if issue:
+        
+    def show(self, number=None, **kwargs):
+        validate_number(number, example="gh-issues show 1")
+        issue = self.__get_issue(number)
         print
         pprint_issue(issue)
-        print "issue #%s submitted successfully" % issue['number']
-    else:
-        if result.get('error'):
-            handle_error(result)
-        else:
-            handle_unexpected_error(result)
-    
-def command_close(number=None, **kwargs):
-    validate_number(number, example="gh-issues close 1")
-    url = "http://github.com/api/v2/json/issues/close/%s/%s/%s"
-    user, repo = get_remote_info()
-    try:
-        page = urlopen2(url % (user, repo, number), auth=True)
-    except Exception, info:
-        print "error: closing issue %s failed (%s)" % (number, info)
-        sys.exit(1)
-    result = simplejson.load(page)
-    page.close()
-    issue = result.get('issue')
-    if issue:
+        
+    def open(self, **kwargs):
+        post_data = create_edit_issue()
+        result = self.__submit('open', data=post_data, auth=True)
+        issue = get_key(result, 'issue')
         print
         pprint_issue(issue)
-    else:
-        if result.get('error'):
-            handle_error(result)
-        else:
-            handle_unexpected_error(result)
-    
-def command_reopen(number=None, **kwargs):
-    validate_number(number, example="gh-issues reopen 1")
-    url = "http://github.com/api/v2/json/issues/reopen/%s/%s/%s"
-    user, repo = get_remote_info()
-    try:
-        page = urlopen2(url % (user, repo, number), auth=True)
-    except Exception, info:
-        print "error: reopening issue %s failed (%s)" % (number, info)
-        sys.exit(1)
-    result = simplejson.load(page)
-    page.close()
-    issue = result.get('issue')
-    if issue:
+        
+    def close(self, number=None, **kwargs):
+        validate_number(number, example="gh-issues close 1")
+        result = self.__submit('close', number, auth=True)
+        issue = get_key(result, 'issue')
         print
         pprint_issue(issue)
-    else:
-        if result.get('error'):
-            handle_error(result)
-        else:
-            handle_unexpected_error(result)
-            
-def command_edit(number=None, **kwargs):
-    validate_number(number, example="gh-issues edit 1")
-    url = "http://github.com/api/v2/json/issues/edit/%s/%s/%s"
-    gh_issue = get_issue_by_number(number)
-    output = {'title': gh_issue['title'], 'body': gh_issue['body']}
-    post_data = create_edit_issue(gh_issue)
-    if post_data['title'] == output['title'] and \
-            post_data['body'].splitlines() == output['body'].splitlines():
-        print "no changes found"
-        sys.exit(1)
-    print "submitting issue, please wait..."
-    user, repo = get_remote_info()
-    try:
-        page = urlopen2(url % (user, repo, number), data=post_data, auth=True)
-    except Exception, info:
-        print "error: submitting issue %s failed (%s)" % (number, info)
-        sys.exit(1)
-    result = simplejson.load(page)
-    page.close()
-    issue = result.get('issue')
-    if issue:
+        
+    def reopen(self, number=None, **kwargs):
+        validate_number(number, example="gh-issues reopen 1")
+        result = self.__submit('reopen', number, auth=True)
+        issue = get_key(result, 'issue')
         print
         pprint_issue(issue)
-        print "issue #%s submitted successfully" % issue['number']
-    else:
-        if result.get('error'):
-            handle_error(result)
-        else:
-            handle_unexpected_error(result)
-            
-def command_label(command, label, number, **kwargs):
-    url = "http://github.com/api/v2/json/issues/label/%s/%s/%s/%s/%s"
-    user, repo = get_remote_info()
-    label = urllib.quote(label)
-    label = label.replace(".", "%2E") # this is not done by urllib.quote
-    url = url % (command, user, repo, label, number)
-    try:
-        page = urlopen2(url, auth=True)
-    except Exception, info:
-        if command == 'add':
-            msg = "error: adding a label to issue %s failed (%s)"
-        elif command == 'remove':
-            msg = "error: removing a label from issue %s failed (%s)"
-        else:
-            msg = "error: changing a label for issue %s failed (%s)"
-        print msg % (number, info)
-        sys.exit(1)
-    result = simplejson.load(page)
-    page.close()
-    labels = result.get('labels')
-    if labels:
-        print "labels for issue #%s:" % number
-        for label in labels:
-            print "- %s" % label
-    else:
-        if result.get('error'):
-            handle_error(result)
+        
+    def edit(self, number=None, **kwargs):
+        validate_number(number, example="gh-issues edit 1")
+        gh_issue = self.__get_issue(number)
+        output = {'title': gh_issue['title'], 'body': gh_issue['body']}
+        post_data = create_edit_issue(gh_issue)
+        if post_data['title'] == output['title'] and \
+                post_data['body'].splitlines() == output['body'].splitlines():
+            print "no changes found"
+            sys.exit(1)
+        result = self.__submit('edit', number, data=post_data, auth=True)
+        issue = get_key(result, 'issue')
+        print
+        pprint_issue(issue)
+        
+    def label(self, command, label, number, **kwargs):
+        label = urllib.quote(label)
+        label = label.replace(".", "%2E") # this is not done by urllib.quote
+        result = self.__submit('label/%s' % command, label, number, auth=True)
+        labels = get_key(result, 'labels')
+        if labels:
+            print "labels for issue #%s:" % number
+            for label in labels:
+                print "- %s" % label
         else:
             print "no labels found for issue #%s" % number
-            
-def command_comment(number=None, **kwargs):
-    validate_number(number, example="gh-issues comment 1")
-    url = "http://github.com/api/v2/json/issues/comment/%s/%s/%s"
-    gh_issue = get_issue_by_number(number)
-    comment = create_comment(gh_issue)
-    post_data = {'comment': comment}
-    print "submitting comment to issue #%s, please wait..." % number
-    user, repo = get_remote_info()
-    try:
-        page = urlopen2(url % (user, repo, number), data=post_data, auth=True)
-    except Exception, info:
-        print "error: submitting comment to issue #%s failed (%s)" % (number, info)
-        sys.exit(1)
-    result = simplejson.load(page)
-    page.close()
-    returned_comment = result.get('comment')
-    if returned_comment:
-        print "comment for issue #%s submitted successfully" % number
-    else:
+        
+    def comment(self, number=None, **kwargs):
+        validate_number(number, example="gh-issues comment 1")
+        gh_issue = self.__get_issue(number)
+        comment = create_comment(gh_issue)
+        post_data = {'comment': comment}
+        result = self.__submit('comment', number, data=post_data, auth=True)
+        returned_comment = get_key(result, 'comment')
+        if returned_comment:
+            print "comment for issue #%s submitted successfully" % number
+        
+    def __get_issue(self, number):
+        result = self.__submit('show', number)
+        return get_key(result, 'issue')
+        
+    def __submit(self, action, *args, **kwargs):
+        base_url = self.url_template % (action, self.user, self.repo)
+        args_list = list(args)
+        args_list.insert(0, base_url)
+        url = "/".join(args_list)
+        page = urlopen2(url, **kwargs)
+        result = simplejson.load(page)
+        page.close()
         if result.get('error'):
-            handle_error(result)
+            handle_error(result) # should raise an Exception
+            sys.exit(1)
         else:
-            handle_unexpected_error(result)
-            
+            return result
+        
 def main():
     usage = """usage: %prog command [args] [options]
-    
+
 Examples:
-gh-issues list [-s open|closed]             # show all open (default) or closed issues
-gh-issues list [-s open|closed] -v          # same as above, but with issue details
-gh-issues                                   # same as: gh-issues list
-gh-issues -v                                # same as: gh-issues list -v
-gh-issues -v | less                         # pipe through less command
-gh-issues show <nr>                         # show issue <nr>
-gh-issues open                              # create a new issue
-gh-issues close <nr>                        # close issue <nr>
-gh-issues reopen <nr>                       # reopen issue <nr>
-gh-issues edit <nr>                         # edit issue <nr>
-gh-issues label add <label> <nr>            # add <label> to issue <nr>
-gh-issues label remove <label> <nr>         # remove <label> from issue <nr>
-gh-issues search <term> [-s open|closed]    # search for all open (default) or closed issues containing <term>
-gh-issues search <term> [-s open|closed] -v # same as above, but with details
-gh-issues comment <nr>                      # create a comment for issue <nr>"""
+%prog list [-s open|closed]             # show all open (default) or closed issues
+%prog list [-s open|closed] -v          # same as above, but with issue details
+%prog                                   # same as: %prog list
+%prog -v                                # same as: %prog list -v
+%prog -v | less                         # pipe through less command
+%prog show <nr>                         # show issue <nr>
+%prog open                              # create a new issue
+%prog close <nr>                        # close issue <nr>
+%prog reopen <nr>                       # reopen issue <nr>
+%prog edit <nr>                         # edit issue <nr>
+%prog label add <label> <nr>            # add <label> to issue <nr>
+%prog label remove <label> <nr>         # remove <label> from issue <nr>
+%prog search <term> [-s open|closed]    # search for all open (default) or closed issues containing <term>
+%prog search <term> [-s open|closed] -v # same as above, but with details
+%prog comment <nr>                      # create a comment for issue <nr>"""
+    
     description = """Description:
-gh-issues provides a command-line interface to GitHub's Issues API (v2)"""
+command-line interface to GitHub's Issues API (v2)"""
+    
     parser = OptionParser(usage=usage, description=description)
     parser.add_option("-v", "--verbose", action="store_true", dest="verbose", 
       default=False, help="show issue details (only for list and search "\
@@ -299,21 +186,29 @@ gh-issues provides a command-line interface to GitHub's Issues API (v2)"""
         type='choice', choices=['open', 'closed'], default='open', 
         help="specify state (only for list and search commands)"\
         " [default: open]")
-    class CustomValues: pass
+    
+    class CustomValues: 
+        pass
     (options, args) = parser.parse_args(values=CustomValues)
+    
     kwargs = dict([(k, v) for k, v in options.__dict__.items() \
         if not k.startswith("__")])
     if args:
-        command = args[0]
+        cmd = args[0]
     else:
-        command = "list" # default
-    if command == 'search':
+        cmd = "list" # default
+    if cmd == 'search':
         search_term = " ".join(args[1:])
         args = (args[0], search_term)
+    
     try:
-        globals()['command_%s' % command](*args[1:], **kwargs)
-    except KeyError:
-        print "command '%s' not implemented" % command
-        
+        user, repo = get_remote_info()
+        commands = Commands(user, repo)
+        getattr(commands, cmd)(*args[1:], **kwargs)
+    except AttributeError:
+        print "error: command '%s' not implemented" % cmd
+    except Exception, info:
+        print "error: %s" % info
+
 if __name__ == '__main__':
     main()
