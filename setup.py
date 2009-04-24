@@ -16,5 +16,16 @@ setup(
     entry_points="""
     [console_scripts]
     gh-issues = github.issues:main
-    """
+    """,
+    classifiers=[
+        'Development Status :: 4 - Beta',
+        'Environment :: Console',
+        'Intended Audience :: Developers',
+        'Intended Audience :: System Administrators',
+        'License :: OSI Approved :: BSD License',
+        'Operating System :: MacOS :: MacOS X',
+        'Operating System :: POSIX',
+        'Programming Language :: Python',
+        'Topic :: Software Development :: Bug Tracking',
+    ],
 )
