@@ -9,6 +9,7 @@ setup(
     license = 'BSD',
     description = "A command-line interface to Github's API.",
     author = 'Sander Smits',
+    author_email = 'jhmsmits@gmail.com',
     packages = find_packages('src'),
     package_dir = {'': 'src'},
     install_requires = ['setuptools', 'simplejson'],
