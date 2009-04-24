@@ -82,21 +82,21 @@ class Commands(object):
         
     def open(self, **kwargs):
         post_data = create_edit_issue()
-        result = self.__submit('open', data=post_data, auth=True)
+        result = self.__submit('open', data=post_data)
         issue = get_key(result, 'issue')
         print
         pprint_issue(issue)
         
     def close(self, number=None, **kwargs):
         validate_number(number, example="gh-issues close 1")
-        result = self.__submit('close', number, auth=True)
+        result = self.__submit('close', number)
         issue = get_key(result, 'issue')
         print
         pprint_issue(issue)
         
     def reopen(self, number=None, **kwargs):
         validate_number(number, example="gh-issues reopen 1")
-        result = self.__submit('reopen', number, auth=True)
+        result = self.__submit('reopen', number)
         issue = get_key(result, 'issue')
         print
         pprint_issue(issue)
@@ -110,7 +110,7 @@ class Commands(object):
                 post_data['body'].splitlines() == output['body'].splitlines():
             print "no changes found"
             sys.exit(1)
-        result = self.__submit('edit', number, data=post_data, auth=True)
+        result = self.__submit('edit', number, data=post_data)
         issue = get_key(result, 'issue')
         print
         pprint_issue(issue)
@@ -118,7 +118,7 @@ class Commands(object):
     def label(self, command, label, number, **kwargs):
         label = urllib.quote(label)
         label = label.replace(".", "%2E") # this is not done by urllib.quote
-        result = self.__submit('label/%s' % command, label, number, auth=True)
+        result = self.__submit('label/%s' % command, label, number)
         labels = get_key(result, 'labels')
         if labels:
             print "labels for issue #%s:" % number
@@ -132,7 +132,7 @@ class Commands(object):
         gh_issue = self.__get_issue(number)
         comment = create_comment(gh_issue)
         post_data = {'comment': comment}
-        result = self.__submit('comment', number, data=post_data, auth=True)
+        result = self.__submit('comment', number, data=post_data)
         returned_comment = get_key(result, 'comment')
         if returned_comment:
             print "comment for issue #%s submitted successfully" % number

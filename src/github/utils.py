@@ -10,7 +10,7 @@ import subprocess
 
 opener = build_opener(HTTPCookieProcessor)
 
-def urlopen2(url, data=None, auth=False, user_agent='github-cli'):
+def urlopen2(url, data=None, auth=True, user_agent='github-cli'):
     if auth:
         config = get_config()
         auth_dict = {'login': config['user'], 'token': config['token']}
