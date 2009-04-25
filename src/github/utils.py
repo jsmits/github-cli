@@ -45,13 +45,13 @@ def get_remote_info():
             raise Exception("invalid user and repo name")
     raise Exception("not a git repository")
     
-def get_remote_info_from_option(repo):
-    if "/" in repo:
-        user, repo = repo.split("/")
+def get_remote_info_from_option(repository):
+    if "/" in repository:
+        user, repo = repository.split("/")
         return user, repo
     else:
         config = get_config()
-        return config['user'], repo
+        return config['user'], repository
     
 def get_config():
     required_keys = ["user", "token"]
@@ -94,58 +94,4 @@ def edit_text(text):
     f.close()
     stripcomment_re = re.compile(r'^#.*$', re.MULTILINE)
     return stripcomment_re.sub('', changed_text).strip()
-    
-def create_edit_issue(issue=None):
-    main_text = """# Please explain the issue. 
-# The first line will be used as the title.
-# Lines starting with `#` will be ignored."""
-    if issue:
-        issue['main'] = main_text
-        template = """%(title)s
-%(body)s
-%(main)s
-#
-#    number:  %(number)s
-#      user:  %(user)s
-#     votes:  %(votes)s
-#     state:  %(state)s
-#   created:  %(created_at)s""" % issue
-    else:
-        template = "\n%s" % main_text
-    text = edit_text(template)
-    if not text:
-        print "error: can not submit an empty issue"
-        sys.exit(1)
-    lines = text.splitlines()
-    title = lines[0]
-    body = "\n".join(lines[1:]).strip()
-    return {'title': title, 'body': body}
-    
-def create_comment(issue):
-    inp = """
-# Please enter a comment.
-# Lines starting with `#` will be ignored.
-#
-#    number:  %(number)s
-#      user:  %(user)s
-#     votes:  %(votes)s
-#     state:  %(state)s
-#   created:  %(created_at)s""" % issue
-    out = edit_text(inp)
-    if not out:
-        print "error: can not submit an empty comment"
-        sys.exit(1)
-    lines = out.splitlines()
-    comment = "\n".join(lines).strip()
-    return comment
-        
-    
-    
-    
-    
-    
-        
 
-        
-        
-                    
