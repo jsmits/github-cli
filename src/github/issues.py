@@ -115,7 +115,13 @@ class Commands(object):
         print
         pprint_issue(issue)
         
-    def label(self, command, label, number, **kwargs):
+    def label(self, command, label, number=None, **kwargs):
+        validate_number(number, example="gh-issues label %s %s 1" % (command,
+            label))
+        if command not in ['add', 'remove']:
+            msg = "label command should use either 'add' or 'remove'\n"\
+                "example: gh-issues label add %s %s" % (label, number)
+            raise Exception(msg)
         label = urllib.quote(label)
         label = label.replace(".", "%2E") # this is not done by urllib.quote
         result = self.__submit('label/%s' % command, label, number)
