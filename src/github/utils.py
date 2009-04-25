@@ -28,29 +28,22 @@ def urlopen2(url, data=None, auth=True, user_agent='github-cli'):
     except urllib2.URLError:
         raise Exception("connection problem")
     
-def get_remote_info(name='origin'):
-    command = "git remote -v"
+def get_remote_info():
+    command = "git config --get remote.origin.url"
     stdout, stderr = Popen(command, shell=True, stdin=PIPE, stdout=PIPE, 
         stderr=PIPE).communicate()
     if stderr:
         for line in stderr.splitlines():
             print line.lower()
-    if stdout:
-        for line in stdout.splitlines():
-            if line.startswith(name):
-                pattern = re.compile(r'^git@github\.com:(.*?)\/(.*?)\.git$')
-                result = pattern.search(line.split()[1])
-                if result:
-                    return result.groups()
-                else:
-                    pattern = re.compile(r'^git:\/\/github\.com\/(.*?)\/(.*?)\.git$')
-                    result = pattern.search(line.split()[1])
-                    if result:
-                        return result.groups()
-                    else:
-                        print "'%s' not found on github" % name
-    print "aborting script"
-    sys.exit(1)
+    elif stdout:
+        line = stdout.strip()
+        pattern = re.compile(r'([^:/]+)/([^/]+).git$')
+        result = pattern.search(line)
+        if result:
+            return result.groups()
+        else:
+            raise Exception("invalid user and repo name")
+    raise Exception("not a git repository")
     
 def get_config():
     required_keys = ["user", "token"]
