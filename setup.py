@@ -8,7 +8,7 @@ setup(
     url = 'http://github.com/jsmits/github-cli',
     license = 'BSD',
     description = "A command-line interface to Github's API.",
-    long_descpription = """for now, github-cli provides a script called 
+    long_description = """for now, github-cli provides a script called 
 ``gh-issues``, that can be used to access all of GitHub's documented Issues 
 API v2 functionality from your command-line""",
     author = 'Sander Smits',
