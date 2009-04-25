@@ -36,7 +36,7 @@ or
 
 ``sudo python setup.py install``
 
-a script called ``gh-issues`` will be installed in your system's ``bin/`` directory
+the ``gh-issues`` executable will be installed to a system ``bin`` directory
 
 configuration
 *************
