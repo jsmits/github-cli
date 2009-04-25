@@ -13,28 +13,25 @@ github-cli is written in `Python <http://www.python.org/>`_
 installation
 ************
 
+**pip**
+
+``pip install github-cli``
+
 **easy_install**
 
 ``easy_install github-cli``
 
+**from source**
+
+``pip install -e git://github.com/jsmits/github-cli.git#egg=github-cli``
+
 or
-
-``sudo easy_install github-cli``
-
-if needed, you can find installation instructions for ``easy_install`` `here
-<http://pypi.python.org/pypi/setuptools/>`_
-
-**latest from source**
 
 ``git clone git://github.com/jsmits/github-cli.git``
 
 ``cd github-cli``
 
 ``python setup.py install``
-
-or
-
-``sudo python setup.py install``
 
 the ``gh-issues`` executable will be installed to a system ``bin`` directory
 
