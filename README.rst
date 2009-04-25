@@ -2,11 +2,13 @@ GitHub API - command-line interface
 ===================================
 about
 *****
-for now, github-cli provides a script called ``gh-issues``, that can be used to 
-access all of GitHub's documented Issues API v2 functionality from your 
+for now, `github-cli <http://github.com/jsmits/github-cli/>`_ provides a 
+script called ``gh-issues``, that can be used to access all of `GitHub 
+<http://www.github.com/>`_'s documented `Issues API 
+<http://develop.github.com/p/issues.html>`_ (v2) functionality from your 
 command-line
 
-github-cli is written in python
+github-cli is written in `Python <http://www.python.org/>`_
 
 installation
 ************
@@ -19,8 +21,8 @@ or
 
 ``sudo easy_install github-cli``
 
-if you don't have ``easy_install`` yet, you can find the installation instructions here: 
-http://pypi.python.org/pypi/setuptools
+if needed, you can find installation instructions for ``easy_install`` `here
+<http://pypi.python.org/pypi/setuptools/>`_
 
 **latest from source**
 
