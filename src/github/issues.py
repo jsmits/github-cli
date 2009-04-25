@@ -4,8 +4,8 @@ import urllib
 import simplejson
 from optparse import OptionParser
 
-from github.utils import urlopen2, get_remote_info, create_edit_issue, \
-    create_comment, get_remote_info_from_option
+from github.utils import urlopen2, get_remote_info, edit_text, \
+    get_remote_info_from_option
 
 def pprint_issue(issue, verbose=True):
     title = "#%s %s" % (issue['number'], issue['title'])
@@ -43,9 +43,50 @@ def get_key(data, key):
         return data[key]
     except KeyError:
         raise Exception("unexpected failure")
+        
+def create_edit_issue(issue=None):
+    main_text = """# Please explain the issue. 
+# The first line will be used as the title.
+# Lines starting with `#` will be ignored."""
+    if issue:
+        issue['main'] = main_text
+        template = """%(title)s
+%(body)s
+%(main)s
+#
+#    number:  %(number)s
+#      user:  %(user)s
+#     votes:  %(votes)s
+#     state:  %(state)s
+#   created:  %(created_at)s""" % issue
+    else:
+        template = "\n%s" % main_text
+    text = edit_text(template)
+    if not text:
+        raise Exception("can not submit an empty issue")
+    lines = text.splitlines()
+    title = lines[0]
+    body = "\n".join(lines[1:]).strip()
+    return {'title': title, 'body': body}
+
+def create_comment(issue):
+    inp = """
+# Please enter a comment.
+# Lines starting with `#` will be ignored.
+#
+#    number:  %(number)s
+#      user:  %(user)s
+#     votes:  %(votes)s
+#     state:  %(state)s
+#   created:  %(created_at)s""" % issue
+    out = edit_text(inp)
+    if not out:
+        raise Exception("can not submit an empty comment")
+    lines = out.splitlines()
+    comment = "\n".join(lines).strip()
+    return comment
 
 class Commands(object):
-    
     def __init__(self, user, repo):
         self.user = user
         self.repo = repo
