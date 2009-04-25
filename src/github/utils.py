@@ -45,6 +45,14 @@ def get_remote_info():
             raise Exception("invalid user and repo name")
     raise Exception("not a git repository")
     
+def get_remote_info_from_option(repo):
+    if "/" in repo:
+        user, repo = repo.split("/")
+        return user, repo
+    else:
+        config = get_config()
+        return config['user'], repo
+    
 def get_config():
     required_keys = ["user", "token"]
     config = {}

@@ -5,7 +5,7 @@ import simplejson
 from optparse import OptionParser
 
 from github.utils import urlopen2, get_remote_info, create_edit_issue, \
-    create_comment
+    create_comment, get_remote_info_from_option
 
 def pprint_issue(issue, verbose=True):
     title = "#%s %s" % (issue['number'], issue['title'])
@@ -179,7 +179,9 @@ Examples:
 %prog label remove <label> <nr>         # remove <label> from issue <nr>
 %prog search <term> [-s open|closed]    # search for all open (default) or closed issues containing <term>
 %prog search <term> [-s open|closed] -v # same as above, but with details
-%prog comment <nr>                      # create a comment for issue <nr>"""
+%prog comment <nr>                      # create a comment for issue <nr>
+%prog -r <user>/<repo>                  # specify a repository
+%prog -r <repo>                         # specify a repository (gets user from global git config)"""
     
     description = """Description:
 command-line interface to GitHub's Issues API (v2)"""
@@ -192,6 +194,10 @@ command-line interface to GitHub's Issues API (v2)"""
         type='choice', choices=['open', 'closed'], default='open', 
         help="specify state (only for list and search commands)"\
         " [default: open]")
+    parser.add_option("-r", "--repo", "--repository", action="store", 
+        dest="repo", help="specify a repository (format: "\
+            "`user/repo` or just `repo` (latter will get the user from the "\
+            "global git config))")
     
     class CustomValues: 
         pass
@@ -208,7 +214,11 @@ command-line interface to GitHub's Issues API (v2)"""
         args = (args[0], search_term)
     
     try:
-        user, repo = get_remote_info()
+        repository = kwargs.get('repo')
+        if repository:
+            user, repo = get_remote_info_from_option(repository)
+        else:    
+            user, repo = get_remote_info()
         commands = Commands(user, repo)
         getattr(commands, cmd)(*args[1:], **kwargs)
     except AttributeError:

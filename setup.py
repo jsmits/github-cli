@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-version = '0.1.3'
+version = '0.1.4'
 
 setup(
     name = "github-cli",
@@ -8,6 +8,9 @@ setup(
     url = 'http://github.com/jsmits/github-cli',
     license = 'BSD',
     description = "A command-line interface to Github's API.",
+    long_descpription = """for now, github-cli provides a script called 
+``gh-issues``, that can be used to access all of GitHub's documented Issues 
+API v2 functionality from your command-line"""
     author = 'Sander Smits',
     author_email = 'jhmsmits@gmail.com',
     packages = find_packages('src'),
