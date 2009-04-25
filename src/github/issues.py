@@ -107,13 +107,23 @@ class Commands(object):
             pprint_issue(issue, verbose)
         
     def list(self, state='open', verbose=False, **kwargs):
-        result = self.__submit('list', state)
-        issues = get_key(result, 'issues')
-        if issues:
-            for issue in issues:
-                pprint_issue(issue, verbose)
+        if state == 'all':
+            states = ['open', 'closed']
         else:
-            print "no issues available"
+            states = [state] 
+        for st in states:
+            result = self.__submit('list', st)
+            issues = get_key(result, 'issues')
+            if issues:
+                header = "%s issues (%s):" % (st, len(issues))
+                print header
+                print "-" * len(header)
+                for issue in issues:
+                    pprint_issue(issue, verbose)
+            else:
+                print "no %s issues available" % st
+            if not st == states[-1]:
+                print # new line between states
         
     def show(self, number=None, **kwargs):
         validate_number(number, example="gh-issues show 1")
@@ -206,8 +216,8 @@ def main():
     usage = """usage: %prog command [args] [options]
 
 Examples:
-%prog list [-s open|closed]             # show all open (default) or closed issues
-%prog list [-s open|closed] -v          # same as above, but with issue details
+%prog list [-s open|closed|all]         # show open, closed or all issues (default: open)
+%prog list [-s open|closed|all] -v      # same as above, but with issue details
 %prog                                   # same as: %prog list
 %prog -v                                # same as: %prog list -v
 %prog -v | less                         # pipe through less command
@@ -218,7 +228,7 @@ Examples:
 %prog edit <nr>                         # edit issue <nr>
 %prog label add <label> <nr>            # add <label> to issue <nr>
 %prog label remove <label> <nr>         # remove <label> from issue <nr>
-%prog search <term> [-s open|closed]    # search for all open (default) or closed issues containing <term>
+%prog search <term> [-s open|closed]    # search for <term> in open or closed issues (default: open)
 %prog search <term> [-s open|closed] -v # same as above, but with details
 %prog comment <nr>                      # create a comment for issue <nr>
 %prog -r <user>/<repo>                  # specify a repository
@@ -232,7 +242,7 @@ command-line interface to GitHub's Issues API (v2)"""
       default=False, help="show issue details (only for list and search "\
         "commands) [default: False]")
     parser.add_option("-s", "--state", action="store", dest="state", 
-        type='choice', choices=['open', 'closed'], default='open', 
+        type='choice', choices=['open', 'closed', 'all'], default='open', 
         help="specify state (only for list and search commands)"\
         " [default: open]")
     parser.add_option("-r", "--repo", "--repository", action="store", 

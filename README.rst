@@ -54,8 +54,8 @@ is hosted on GitHub, you can do this:
 =============================================== ================================================================
 command                                         info
 =============================================== ================================================================
-``gh-issues list [-s open|closed]``             show all open (default) or closed issues
-``gh-issues list -v [-s open|closed]``          same as above, but with issue details
+``gh-issues list [-s open|closed|all]``         show open, closed or all issues (default: open)
+``gh-issues list [-s open|closed|all] -v``      same as above, but with issue details
 ``gh-issues``                                   same as: ``gh-issues list``
 ``gh-issues -v``                                same as: ``gh-issues list -v``
 ``gh-issues -v | less``                         pipe through less command
@@ -66,7 +66,7 @@ command                                         info
 ``gh-issues edit <nr>``                         edit issue <nr>
 ``gh-issues label add <label> <nr>``            add <label> to issue <nr>
 ``gh-issues label remove <label> <nr>``         remove <label> from issue <nr>
-``gh-issues search <term> [-s open|closed]``    search for all open (default) or closed issues containing <term>
+``gh-issues search <term> [-s open|closed]``    search for <term> in open or closed issues (default: open)
 ``gh-issues search <term> [-s open|closed] -v`` same as above, but with details
 ``gh-issues comment <nr>``                      create a comment for issue <nr>
 ``gh-issues -r <user>/<repo>``                  specify a repository
