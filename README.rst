@@ -60,15 +60,15 @@ command                                         info
 ``gh-issues -v``                                same as: ``gh-issues list -v``
 ``gh-issues -v | less``                         pipe through less command
 ``gh-issues show <nr>``                         show issue <nr>
-``gh-issues open``                              create a new issue
+``gh-issues open``                              create a new issue (with $EDITOR)
 ``gh-issues close <nr>``                        close issue <nr>
 ``gh-issues reopen <nr>``                       reopen issue <nr>
-``gh-issues edit <nr>``                         edit issue <nr>
+``gh-issues edit <nr>``                         edit issue <nr> (with $EDITOR)
 ``gh-issues label add <label> <nr>``            add <label> to issue <nr>
 ``gh-issues label remove <label> <nr>``         remove <label> from issue <nr>
 ``gh-issues search <term> [-s open|closed]``    search for <term> in open or closed issues (default: open)
 ``gh-issues search <term> [-s open|closed] -v`` same as above, but with details
-``gh-issues comment <nr>``                      create a comment for issue <nr>
+``gh-issues comment <nr>``                      create a comment for issue <nr> (with $EDITOR)
 ``gh-issues -r <user>/<repo>``                  specify a repository
 ``gh-issues -r <repo>``                         specify a repository (user comes from global git config)
 ``gh-issues -h``                                show help message

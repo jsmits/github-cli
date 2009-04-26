@@ -222,15 +222,15 @@ Examples:
 %prog -v                                # same as: %prog list -v
 %prog -v | less                         # pipe through less command
 %prog show <nr>                         # show issue <nr>
-%prog open                              # create a new issue
+%prog open                              # create a new issue (with $EDITOR)
 %prog close <nr>                        # close issue <nr>
 %prog reopen <nr>                       # reopen issue <nr>
-%prog edit <nr>                         # edit issue <nr>
+%prog edit <nr>                         # edit issue <nr> (with $EDITOR)
 %prog label add <label> <nr>            # add <label> to issue <nr>
 %prog label remove <label> <nr>         # remove <label> from issue <nr>
 %prog search <term> [-s open|closed]    # search for <term> in open or closed issues (default: open)
 %prog search <term> [-s open|closed] -v # same as above, but with details
-%prog comment <nr>                      # create a comment for issue <nr>
+%prog comment <nr>                      # create a comment for issue <nr> (with $EDITOR)
 %prog -r <user>/<repo>                  # specify a repository
 %prog -r <repo>                         # specify a repository (gets user from global git config)"""
     
