@@ -33,7 +33,11 @@ or
 
 ``python setup.py install``
 
+---
+
 the ``gh-issues`` executable will be installed to a system ``bin`` directory
+
+**note**: if installation requires root permissions, run the install command with ``sudo``
 
 configuration
 *************
