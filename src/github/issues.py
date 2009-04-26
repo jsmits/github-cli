@@ -231,7 +231,7 @@ Examples:
 %prog search <term> [-s open|closed]    # search for <term> in open or closed issues (default: open)
 %prog search <term> [-s open|closed] -v # same as above, but with details
 %prog comment <nr>                      # create a comment for issue <nr> (with $EDITOR)
-%prog -r <user>/<repo>                  # specify a repository
+%prog -r <user>/<repo>                  # specify a repository (can be used for all commands)
 %prog -r <repo>                         # specify a repository (gets user from global git config)"""
     
     description = """Description:

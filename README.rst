@@ -69,7 +69,7 @@ command                                         info
 ``gh-issues search <term> [-s open|closed]``    search for <term> in open or closed issues (default: open)
 ``gh-issues search <term> [-s open|closed] -v`` same as above, but with details
 ``gh-issues comment <nr>``                      create a comment for issue <nr> (with $EDITOR)
-``gh-issues -r <user>/<repo>``                  specify a repository
+``gh-issues -r <user>/<repo>``                  specify a repository (can be used for all commands)
 ``gh-issues -r <repo>``                         specify a repository (user comes from global git config)
 ``gh-issues -h``                                show help message
 =============================================== ================================================================
