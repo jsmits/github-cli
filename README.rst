@@ -15,15 +15,15 @@ installation
 
 **pip**
 
-``pip install github-cli``
+``sudo pip install github-cli``
 
 **easy_install**
 
-``easy_install github-cli``
+``sudo easy_install github-cli``
 
 **from source**
 
-``pip install -e git://github.com/jsmits/github-cli.git#egg=github-cli``
+``sudo pip install -e git://github.com/jsmits/github-cli.git#egg=github-cli``
 
 or
 
@@ -31,13 +31,13 @@ or
 
 ``cd github-cli``
 
-``python setup.py install``
+``python setup.py build``
+
+``sudo python setup.py install``
 
 ---
 
 the ``gh-issues`` executable will be installed to a system ``bin`` directory
-
-**note**: if installation requires root permissions, run the install command with ``sudo``
 
 configuration
 *************
