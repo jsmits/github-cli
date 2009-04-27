@@ -63,7 +63,9 @@ command                                         info
 ``gh-issues``                                   same as: ``gh-issues list``
 ``gh-issues -v``                                same as: ``gh-issues list -v``
 ``gh-issues -v | less``                         pipe through less command
+``gh-issues [-s open|closed] -w``               show issues' GitHub page in web browser (default: open)
 ``gh-issues show <nr>``                         show issue <nr>
+``gh-issues show <nr> -w``                      show issue <nr>'s GitHub page in web browser
 ``gh-issues open``                              create a new issue (with $EDITOR)
 ``gh-issues close <nr>``                        close issue <nr>
 ``gh-issues reopen <nr>``                       reopen issue <nr>

@@ -3,6 +3,7 @@ import sys
 import urllib
 import simplejson
 from optparse import OptionParser
+import webbrowser as browser
 
 from github.utils import urlopen2, get_remote_info, edit_text, \
     get_remote_info_from_option
@@ -85,7 +86,7 @@ def create_comment(issue):
     lines = out.splitlines()
     comment = "\n".join(lines).strip()
     return comment
-
+    
 class Commands(object):
     def __init__(self, user, repo):
         self.user = user
@@ -106,7 +107,16 @@ class Commands(object):
         for issue in issues:
             pprint_issue(issue, verbose)
         
-    def list(self, state='open', verbose=False, **kwargs):
+    def list(self, state='open', verbose=False, webbrowser=False, **kwargs):
+        if webbrowser:
+            issues_url_template = "http://github.com/%s/%s/issues/%s"
+            if state == "closed":
+                issues_url = issues_url_template % (self.user, self.repo, state)
+            else:
+                issues_url = issues_url_template % (self.user, self.repo, "")
+            browser.open(issues_url)
+            sys.exit(0)
+            
         if state == 'all':
             states = ['open', 'closed']
         else:
@@ -125,8 +135,13 @@ class Commands(object):
             if not st == states[-1]:
                 print # new line between states
         
-    def show(self, number=None, **kwargs):
+    def show(self, number=None, webbrowser=False, **kwargs):
         validate_number(number, example="gh-issues show 1")
+        if webbrowser:
+            issue_url_template = "http://github.com/%s/%s/issues/%s/find"
+            issue_url = issue_url_template % (self.user, self.repo, number)
+            browser.open(issue_url)
+            sys.exit(0)
         issue = self.__get_issue(number)
         print
         pprint_issue(issue)
@@ -221,7 +236,9 @@ Examples:
 %prog                                   # same as: %prog list
 %prog -v                                # same as: %prog list -v
 %prog -v | less                         # pipe through less command
+%prog [-s open|closed] -w               # show issues' GitHub page in web browser (default: open)
 %prog show <nr>                         # show issue <nr>
+%prog show <nr> -w                      # show issue <nr>'s GitHub page in web browser
 %prog open                              # create a new issue (with $EDITOR)
 %prog close <nr>                        # close issue <nr>
 %prog reopen <nr>                       # reopen issue <nr>
@@ -249,6 +266,9 @@ command-line interface to GitHub's Issues API (v2)"""
         dest="repo", help="specify a repository (format: "\
             "`user/repo` or just `repo` (latter will get the user from the "\
             "global git config))")
+    parser.add_option("-w", "--web", "--webbrowser", action="store_true", 
+        dest="webbrowser", default=False, help="show issue(s) GitHub page "\
+        "in web browser (only for list and show commands) [default: False]")
     
     class CustomValues: 
         pass
