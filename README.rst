@@ -52,30 +52,49 @@ you can find the username and API token on your GitHub's account page
 
 usage
 *****
-from any directory that is part of a git working directory with an origin that
-is hosted on GitHub, you can do this:
+inside a git working directory with an origin that is hosted on GitHub, you can 
+do this (note: with the -r option, commands can be invoked from anywhere):
 
-========================================== ===========================================================
-command                                    info
-========================================== ===========================================================
-``gh-i list [-s open|closed|all]``         show open, closed or all issues (default: open)
-``gh-i list [-s open|closed|all] -v``      same as above, but with issue details
-``gh-i``                                   same as: ``gh-i list``
-``gh-i -v``                                same as: ``gh-i list -v``
-``gh-i -v | less``                         pipe through less command
-``gh-i [-s open|closed] -w``               show issues' GitHub page in web browser (default: open)
-``gh-i show <nr>``                         show issue <nr>
-``gh-i show <nr> -w``                      show issue <nr>'s GitHub page in web browser
-``gh-i open``                              create a new issue (with $EDITOR)
-``gh-i close <nr>``                        close issue <nr>
-``gh-i reopen <nr>``                       reopen issue <nr>
-``gh-i edit <nr>``                         edit issue <nr> (with $EDITOR)
-``gh-i label add <label> <nr>``            add <label> to issue <nr>
-``gh-i label remove <label> <nr>``         remove <label> from issue <nr>
-``gh-i search <term> [-s open|closed]``    search for <term> in open or closed issues (default: open)
-``gh-i search <term> [-s open|closed] -v`` same as above, but with details
-``gh-i comment <nr>``                      create a comment for issue <nr> (with $EDITOR)
-``gh-i -r <user>/<repo>``                  specify a repository (can be used for all commands)
-``gh-i -r <repo>``                         specify a repository (user comes from global git config)
-``gh-i -h``                                show help message
-========================================== ===========================================================
+::
+
+ (github-cli)[jsmits@imac:~]$ gh-i --help
+ Usage: gh-i command [args] [options]
+ 
+ Examples:
+ gh-i list [-s open|closed|all]         # show open, closed or all issues (default: open)
+ gh-i list [-s open|closed|all] -v      # same as above, but with issue details
+ gh-i                                   # same as: gh-i list
+ gh-i -v                                # same as: gh-i list -v
+ gh-i -v | less                         # pipe through less command
+ gh-i [-s open|closed] -w               # show issues' GitHub page in web browser (default: open)
+ gh-i show <nr>                         # show issue <nr>
+ gh-i show <nr> -w                      # show issue <nr>'s GitHub page in web browser
+ gh-i open                              # create a new issue (with $EDITOR)
+ gh-i close <nr>                        # close issue <nr>
+ gh-i reopen <nr>                       # reopen issue <nr>
+ gh-i edit <nr>                         # edit issue <nr> (with $EDITOR)
+ gh-i label add <label> <nr>            # add <label> to issue <nr>
+ gh-i label remove <label> <nr>         # remove <label> from issue <nr>
+ gh-i search <term> [-s open|closed]    # search for <term> in open or closed issues (default: open)
+ gh-i search <term> [-s open|closed] -v # same as above, but with details
+ gh-i comment <nr>                      # create a comment for issue <nr> (with $EDITOR)
+ gh-i -r <user>/<repo>                  # specify a repository (can be used for all commands)
+ gh-i -r <repo>                         # specify a repository (gets user from global git config)
+ 
+ Description: command-line interface to GitHub's Issues API (v2)
+ 
+ Options:
+   -h, --help            show this help message and exit
+   -v, --verbose         show issue details (only for list and search commands)
+                         [default: False]
+   -s STATE, --state=STATE
+                         specify state (only for list and search commands)
+                         [default: open]
+   -r REPO, --repo=REPO, --repository=REPO
+                         specify a repository (format: `user/repo` or just
+                         `repo` (latter will get the user from the global git
+                         config))
+   -w, --web, --webbrowser
+                         show issue(s) GitHub page in web browser (only for
+                         list and show commands) [default: False]
+ 
