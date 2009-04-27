@@ -3,7 +3,7 @@ GitHub API - command-line interface
 about
 *****
 for now, `github-cli <http://github.com/jsmits/github-cli/>`_ provides a 
-script called ``gh-issues``, that can be used to access all of `GitHub 
+script called ``gh-i``, that can be used to access all of `GitHub 
 <http://www.github.com/>`_'s documented `Issues API 
 <http://develop.github.com/p/issues.html>`_ (v2) functionality from your 
 command-line
@@ -37,7 +37,7 @@ or
 
 ---
 
-the ``gh-issues`` executable will be installed to a system ``bin`` directory
+the ``gh-i`` executable will be installed to a system ``bin`` directory
 
 configuration
 *************
@@ -55,27 +55,27 @@ usage
 from any directory that is part of a git working directory with an origin that
 is hosted on GitHub, you can do this:
 
-=============================================== ================================================================
-command                                         info
-=============================================== ================================================================
-``gh-issues list [-s open|closed|all]``         show open, closed or all issues (default: open)
-``gh-issues list [-s open|closed|all] -v``      same as above, but with issue details
-``gh-issues``                                   same as: ``gh-issues list``
-``gh-issues -v``                                same as: ``gh-issues list -v``
-``gh-issues -v | less``                         pipe through less command
-``gh-issues [-s open|closed] -w``               show issues' GitHub page in web browser (default: open)
-``gh-issues show <nr>``                         show issue <nr>
-``gh-issues show <nr> -w``                      show issue <nr>'s GitHub page in web browser
-``gh-issues open``                              create a new issue (with $EDITOR)
-``gh-issues close <nr>``                        close issue <nr>
-``gh-issues reopen <nr>``                       reopen issue <nr>
-``gh-issues edit <nr>``                         edit issue <nr> (with $EDITOR)
-``gh-issues label add <label> <nr>``            add <label> to issue <nr>
-``gh-issues label remove <label> <nr>``         remove <label> from issue <nr>
-``gh-issues search <term> [-s open|closed]``    search for <term> in open or closed issues (default: open)
-``gh-issues search <term> [-s open|closed] -v`` same as above, but with details
-``gh-issues comment <nr>``                      create a comment for issue <nr> (with $EDITOR)
-``gh-issues -r <user>/<repo>``                  specify a repository (can be used for all commands)
-``gh-issues -r <repo>``                         specify a repository (user comes from global git config)
-``gh-issues -h``                                show help message
-=============================================== ================================================================
+========================================== ===========================================================
+command                                    info
+========================================== ===========================================================
+``gh-i list [-s open|closed|all]``         show open, closed or all issues (default: open)
+``gh-i list [-s open|closed|all] -v``      same as above, but with issue details
+``gh-i``                                   same as: ``gh-i list``
+``gh-i -v``                                same as: ``gh-i list -v``
+``gh-i -v | less``                         pipe through less command
+``gh-i [-s open|closed] -w``               show issues' GitHub page in web browser (default: open)
+``gh-i show <nr>``                         show issue <nr>
+``gh-i show <nr> -w``                      show issue <nr>'s GitHub page in web browser
+``gh-i open``                              create a new issue (with $EDITOR)
+``gh-i close <nr>``                        close issue <nr>
+``gh-i reopen <nr>``                       reopen issue <nr>
+``gh-i edit <nr>``                         edit issue <nr> (with $EDITOR)
+``gh-i label add <label> <nr>``            add <label> to issue <nr>
+``gh-i label remove <label> <nr>``         remove <label> from issue <nr>
+``gh-i search <term> [-s open|closed]``    search for <term> in open or closed issues (default: open)
+``gh-i search <term> [-s open|closed] -v`` same as above, but with details
+``gh-i comment <nr>``                      create a comment for issue <nr> (with $EDITOR)
+``gh-i -r <user>/<repo>``                  specify a repository (can be used for all commands)
+``gh-i -r <repo>``                         specify a repository (user comes from global git config)
+``gh-i -h``                                show help message
+========================================== ===========================================================

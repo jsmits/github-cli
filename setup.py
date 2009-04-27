@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-version = '0.1.8'
+version = '0.1.9'
 
 setup(
     name = "github-cli",
@@ -9,7 +9,7 @@ setup(
     license = 'BSD',
     description = "A command-line interface to Github's API.",
     long_description = """for now, `github-cli <http://github.com/jsmits/github-cli/>`_ 
-provides a script called ``gh-issues``, that can be used to access all of `GitHub 
+provides a script called ``gh-i``, that can be used to access all of `GitHub 
 <http://www.github.com/>`_'s documented `Issues API <http://develop.github.com/p/issues.html>`_ 
 (v2) functionality from your command-line""",
     author = 'Sander Smits',
@@ -19,7 +19,7 @@ provides a script called ``gh-issues``, that can be used to access all of `GitHu
     install_requires = ['setuptools', 'simplejson'],
     entry_points="""
     [console_scripts]
-    gh-issues = github.issues:main
+    gh-i = github.issues:main
     """,
     classifiers=[
         'Development Status :: 4 - Beta',
