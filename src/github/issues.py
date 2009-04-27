@@ -114,8 +114,12 @@ class Commands(object):
                 issues_url = issues_url_template % (self.user, self.repo, state)
             else:
                 issues_url = issues_url_template % (self.user, self.repo, "")
-            browser.open(issues_url)
-            sys.exit(0)
+            try:
+                browser.open(issues_url)
+            except:
+                print "error: opening page in web browser failed"
+            else:
+                sys.exit(0)
             
         if state == 'all':
             states = ['open', 'closed']
@@ -140,8 +144,12 @@ class Commands(object):
         if webbrowser:
             issue_url_template = "http://github.com/%s/%s/issues/%s/find"
             issue_url = issue_url_template % (self.user, self.repo, number)
-            browser.open(issue_url)
-            sys.exit(0)
+            try:
+                browser.open(issue_url)
+            except:
+                print "error: opening page in web browser failed"
+            else:
+                sys.exit(0)
         issue = self.__get_issue(number)
         print
         pprint_issue(issue)
