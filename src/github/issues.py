@@ -6,7 +6,7 @@ from optparse import OptionParser
 import webbrowser as browser
 
 from github.utils import urlopen2, get_remote_info, edit_text, \
-    get_remote_info_from_option
+    get_remote_info_from_option, get_prog
 
 def pprint_issue(issue, verbose=True):
     title = "#%s %s" % (issue['number'], issue['title'])
@@ -95,7 +95,7 @@ class Commands(object):
         
     def search(self, search_term=None, state='open', verbose=False, **kwargs):
         if not search_term:
-            example = "gh-i search experimental"
+            example = "%s search experimental" % get_prog()
             msg = "error: search term required\nexample: %s" % example
             print msg
             sys.exit(1)
@@ -140,7 +140,7 @@ class Commands(object):
                 print # new line between states
         
     def show(self, number=None, webbrowser=False, **kwargs):
-        validate_number(number, example="gh-i show 1")
+        validate_number(number, example="%s show 1" % get_prog())
         if webbrowser:
             issue_url_template = "http://github.com/%s/%s/issues/%s/find"
             issue_url = issue_url_template % (self.user, self.repo, number)
@@ -162,21 +162,21 @@ class Commands(object):
         pprint_issue(issue)
         
     def close(self, number=None, **kwargs):
-        validate_number(number, example="gh-i close 1")
+        validate_number(number, example="%s close 1" % get_prog())
         result = self.__submit('close', number)
         issue = get_key(result, 'issue')
         print
         pprint_issue(issue)
         
     def reopen(self, number=None, **kwargs):
-        validate_number(number, example="gh-i reopen 1")
+        validate_number(number, example="%s reopen 1" % get_prog())
         result = self.__submit('reopen', number)
         issue = get_key(result, 'issue')
         print
         pprint_issue(issue)
         
     def edit(self, number=None, **kwargs):
-        validate_number(number, example="gh-i edit 1")
+        validate_number(number, example="%s edit 1" % get_prog())
         gh_issue = self.__get_issue(number)
         output = {'title': gh_issue['title'], 'body': gh_issue['body']}
         post_data = create_edit_issue(gh_issue)
@@ -190,11 +190,11 @@ class Commands(object):
         pprint_issue(issue)
         
     def label(self, command, label, number=None, **kwargs):
-        validate_number(number, example="gh-i label %s %s 1" % (command,
-            label))
+        validate_number(number, example="%s label %s %s 1" % (get_prog(), 
+            command, label))
         if command not in ['add', 'remove']:
             msg = "label command should use either 'add' or 'remove'\n"\
-                "example: gh-i label add %s %s" % (label, number)
+                "example: %s label add %s %s" % (get_prog(), label, number)
             raise Exception(msg)
         label = urllib.quote(label)
         label = label.replace(".", "%2E") # this is not done by urllib.quote
@@ -208,7 +208,7 @@ class Commands(object):
             print "no labels found for issue #%s" % number
         
     def comment(self, number=None, **kwargs):
-        validate_number(number, example="gh-i comment 1")
+        validate_number(number, example="%s comment 1" % get_prog())
         gh_issue = self.__get_issue(number)
         comment = create_comment(gh_issue)
         post_data = {'comment': comment}

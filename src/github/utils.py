@@ -94,4 +94,10 @@ def edit_text(text):
     f.close()
     stripcomment_re = re.compile(r'^#.*$', re.MULTILINE)
     return stripcomment_re.sub('', changed_text).strip()
+    
+def get_prog():
+    if sys.argv and sys.argv[0]:
+        return os.path.split(sys.argv[0])[1]
+    else:
+        return '<prog>'
 
