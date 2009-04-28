@@ -9,18 +9,24 @@ from github.utils import urlopen2, get_remote_info, edit_text, \
     get_remote_info_from_option, get_prog
 
 def pprint_issue(issue, verbose=True):
-    title = "#%s %s" % (issue['number'], issue['title'])
+    if verbose:
+        indent = ""
+    else:
+        indent = " " * (5 - len(str(issue['number'])))
+    title = "%s%s. %s" % (indent, issue['number'], issue['title'])
     print title
     if verbose:
         print "-" * len(title)
-        print "%s" % issue['body']
-        print "---"
-        print "state: %s" % issue['state']
-        print "%s votes" % issue['votes']
-        print "created: %s" % issue['created_at']
+        if issue['body']:
+            print "%s" % issue['body']
+        print
+        print "    state: %s" % issue['state']
+        print "     user: %s" % issue['user']
+        print "    votes: %s" % issue['votes']
+        print "  created: %s" % issue['created_at']
         updated = issue.get('updated_at')
         if updated and not updated == issue['created_at']:
-            print "updated: %s" % updated
+            print "  updated: %s" % updated
         print
     
 def handle_error(result):
@@ -103,7 +109,7 @@ class Commands(object):
         search_term_quoted = search_term_quoted.replace(".", "%2E")
         result = self.__submit('search', search_term, state)
         issues = get_key(result, 'issues')
-        print "searching for '%s' returned %s issues" % (search_term, len(issues))
+        print "# searching for '%s' returned %s issues" % (search_term, len(issues))
         for issue in issues:
             pprint_issue(issue, verbose)
         
@@ -129,9 +135,8 @@ class Commands(object):
             result = self.__submit('list', st)
             issues = get_key(result, 'issues')
             if issues:
-                header = "%s issues (%s):" % (st, len(issues))
+                header = "# %s issues on %s/%s" % (st, self.user, self.repo)
                 print header
-                print "-" * len(header)
                 for issue in issues:
                     pprint_issue(issue, verbose)
             else:
