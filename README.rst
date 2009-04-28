@@ -62,7 +62,7 @@ do this (note: with the -r option, commands can be invoked from anywhere):
 
   (github-cli)[jsmits@imac:~]$ ghi --help
   Usage: ghi command [args] [options]
-  
+
   Examples:
   ghi list [-s open|closed|all]         # show open, closed or all issues (default: open)
   ghi list [-s open|closed|all] -v      # same as above, but with issue details
@@ -71,7 +71,8 @@ do this (note: with the -r option, commands can be invoked from anywhere):
   ghi -v | less                         # pipe through less command
   ghi [-s open|closed] -w               # show issues' GitHub page in web browser (default: open)
   ghi show <nr>                         # show issue <nr>
-  ghi show <nr> -w                      # show issue <nr>'s GitHub page in web browser
+  ghi <nr>                              # same as: ghi show <nr>
+  ghi <nr> -w                           # show issue <nr>'s GitHub page in web browser
   ghi open                              # create a new issue (with $EDITOR)
   ghi close <nr>                        # close issue <nr>
   ghi reopen <nr>                       # reopen issue <nr>
@@ -83,9 +84,9 @@ do this (note: with the -r option, commands can be invoked from anywhere):
   ghi comment <nr>                      # create a comment for issue <nr> (with $EDITOR)
   ghi -r <user>/<repo>                  # specify a repository (can be used for all commands)
   ghi -r <repo>                         # specify a repository (gets user from global git config)
-  
+
   Description: command-line interface to GitHub's Issues API (v2)
-  
+
   Options:
     -h, --help            show this help message and exit
     -v, --verbose         show issue details (only for list and search commands)

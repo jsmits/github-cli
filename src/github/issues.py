@@ -251,7 +251,8 @@ Examples:
 %prog -v | less                         # pipe through less command
 %prog [-s open|closed] -w               # show issues' GitHub page in web browser (default: open)
 %prog show <nr>                         # show issue <nr>
-%prog show <nr> -w                      # show issue <nr>'s GitHub page in web browser
+%prog <nr>                              # same as: %prog show <nr>
+%prog <nr> -w                           # show issue <nr>'s GitHub page in web browser
 %prog open                              # create a new issue (with $EDITOR)
 %prog close <nr>                        # close issue <nr>
 %prog reopen <nr>                       # reopen issue <nr>
@@ -291,8 +292,16 @@ command-line interface to GitHub's Issues API (v2)"""
         if not k.startswith("__")])
     if args:
         cmd = args[0]
+        try:
+            nr = str(int(cmd))
+            if cmd == nr:
+                cmd = 'show'
+                args = (cmd, nr) 
+        except: 
+            pass
     else:
         cmd = "list" # default
+        
     if cmd == 'search':
         search_term = " ".join(args[1:])
         args = (args[0], search_term)
