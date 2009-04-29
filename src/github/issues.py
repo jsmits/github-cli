@@ -1,9 +1,14 @@
 import os
 import sys
 import urllib
-import simplejson
 from optparse import OptionParser
 import webbrowser as browser
+
+try:
+    import simplejson
+except ImportError:
+    print "error: simplejson required"
+    sys.exit(1)
 
 from github.utils import urlopen2, get_remote_info, edit_text, \
     get_remote_info_from_option, get_prog
