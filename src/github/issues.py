@@ -295,8 +295,9 @@ command-line interface to GitHub's Issues API (v2)"""
     
     kwargs = dict([(k, v) for k, v in options.__dict__.items() \
         if not k.startswith("__")])
-    kwargs['state'] = {'o': 'open', 'c': 'closed', 'a': 'all'}.get(
-        kwargs['state'], kwargs['state'])
+    if kwargs.get('state'):
+        kwargs['state'] = {'o': 'open', 'c': 'closed', 'a': 'all'}.get(
+            kwargs['state'], kwargs['state'])
     
     if args:
         cmd = args[0]
