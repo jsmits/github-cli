@@ -250,11 +250,11 @@ def main():
 
 Examples:
 %prog list [-s open|closed|all]         # show open, closed or all issues (default: open)
-%prog list [-s open|closed|all] -v      # same as above, but with issue details
+%prog [-s o|c|a] -v                     # same as above, but with issue details
 %prog                                   # same as: %prog list
 %prog -v                                # same as: %prog list -v
 %prog -v | less                         # pipe through less command
-%prog [-s open|closed] -w               # show issues' GitHub page in web browser (default: open)
+%prog [-s o|c] -w                       # show issues' GitHub page in web browser (default: open)
 %prog show <nr>                         # show issue <nr>
 %prog <nr>                              # same as: %prog show <nr>
 %prog <nr> -w                           # show issue <nr>'s GitHub page in web browser
@@ -265,7 +265,7 @@ Examples:
 %prog label add <label> <nr>            # add <label> to issue <nr>
 %prog label remove <label> <nr>         # remove <label> from issue <nr>
 %prog search <term> [-s open|closed]    # search for <term> in open or closed issues (default: open)
-%prog search <term> [-s open|closed] -v # same as above, but with details
+%prog search <term> [-s o|c] -v         # same as above, but with details
 %prog comment <nr>                      # create a comment for issue <nr> (with $EDITOR)
 %prog -r <user>/<repo>                  # specify a repository (can be used for all commands)
 %prog -r <repo>                         # specify a repository (gets user from global git config)"""
@@ -278,9 +278,9 @@ command-line interface to GitHub's Issues API (v2)"""
       default=False, help="show issue details (only for list and search "\
         "commands) [default: False]")
     parser.add_option("-s", "--state", action="store", dest="state", 
-        type='choice', choices=['open', 'closed', 'all'], default='open', 
-        help="specify state (only for list and search commands)"\
-        " [default: open]")
+        type='choice', choices=['o', 'open', 'c', 'closed', 'a', 'all'], 
+        default='open', help="specify state (only for list and search "\
+        "commands) [choices: (o, open), (c, closed), (a, all); default: open]")
     parser.add_option("-r", "--repo", "--repository", action="store", 
         dest="repo", help="specify a repository (format: "\
             "`user/repo` or just `repo` (latter will get the user from the "\
@@ -295,6 +295,9 @@ command-line interface to GitHub's Issues API (v2)"""
     
     kwargs = dict([(k, v) for k, v in options.__dict__.items() \
         if not k.startswith("__")])
+    kwargs['state'] = {'o': 'open', 'c': 'closed', 'a': 'all'}.get(
+        kwargs['state'], kwargs['state'])
+    
     if args:
         cmd = args[0]
         try:

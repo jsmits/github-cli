@@ -65,11 +65,11 @@ do this (note: with the -r option, commands can be invoked from anywhere):
 
   Examples:
   ghi list [-s open|closed|all]         # show open, closed or all issues (default: open)
-  ghi list [-s open|closed|all] -v      # same as above, but with issue details
+  ghi [-s o|c|a] -v                     # same as above, but with issue details
   ghi                                   # same as: ghi list
   ghi -v                                # same as: ghi list -v
   ghi -v | less                         # pipe through less command
-  ghi [-s open|closed] -w               # show issues' GitHub page in web browser (default: open)
+  ghi [-s o|c] -w                       # show issues' GitHub page in web browser (default: open)
   ghi show <nr>                         # show issue <nr>
   ghi <nr>                              # same as: ghi show <nr>
   ghi <nr> -w                           # show issue <nr>'s GitHub page in web browser
@@ -80,7 +80,7 @@ do this (note: with the -r option, commands can be invoked from anywhere):
   ghi label add <label> <nr>            # add <label> to issue <nr>
   ghi label remove <label> <nr>         # remove <label> from issue <nr>
   ghi search <term> [-s open|closed]    # search for <term> in open or closed issues (default: open)
-  ghi search <term> [-s open|closed] -v # same as above, but with details
+  ghi search <term> [-s o|c] -v         # same as above, but with details
   ghi comment <nr>                      # create a comment for issue <nr> (with $EDITOR)
   ghi -r <user>/<repo>                  # specify a repository (can be used for all commands)
   ghi -r <repo>                         # specify a repository (gets user from global git config)
@@ -93,7 +93,8 @@ do this (note: with the -r option, commands can be invoked from anywhere):
                           [default: False]
     -s STATE, --state=STATE
                           specify state (only for list and search commands)
-                          [default: open]
+                          [choices: (o, open), (c, closed), (a, all); default:
+                          open]
     -r REPO, --repo=REPO, --repository=REPO
                           specify a repository (format: `user/repo` or just
                           `repo` (latter will get the user from the global git
@@ -101,4 +102,5 @@ do this (note: with the -r option, commands can be invoked from anywhere):
     -w, --web, --webbrowser
                           show issue(s) GitHub page in web browser (only for
                           list and show commands) [default: False]
+
    
