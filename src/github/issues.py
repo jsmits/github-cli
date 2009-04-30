@@ -35,20 +35,24 @@ def pprint_issue(issue, verbose=True):
         print
     
 def handle_error(result):
+    output = []
     for msg in result['error']:
-        print "error: %s" % msg['error']
+        if msg == result['error'][0]:
+            output.append(msg['error'])
+        else:
+            output.append("error: %s" % msg['error'])
+    error_msg = "\n".join(output)
+    raise Exception(error_msg)
         
 def validate_number(number, example):
-    msg = "error: number required\nexample: %s" % example
+    msg = "number required\nexample: %s" % example
     if not number:
-        print msg
-        sys.exit(1)
+        raise Exception(msg)
     else:
         try:
             int(number)
         except:
-            print msg
-            sys.exit(1)
+            raise Exception(msg)
 
 def get_key(data, key):
     try:
@@ -240,8 +244,7 @@ class Commands(object):
         result = simplejson.load(page)
         page.close()
         if result.get('error'):
-            handle_error(result) # should raise an Exception
-            sys.exit(1)
+            handle_error(result)
         else:
             return result
         
@@ -336,9 +339,9 @@ command-line interface to GitHub's Issues API (v2)"""
         commands = Commands(user, repo)
         getattr(commands, cmd)(*args[1:], **kwargs)
     except AttributeError:
-        print "error: command '%s' not implemented" % cmd
+        return "error: command '%s' not implemented" % cmd
     except Exception, info:
-        print "error: %s" % info
+        return "error: %s" % info
 
 if __name__ == '__main__':
     main()
