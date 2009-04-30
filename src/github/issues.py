@@ -258,10 +258,10 @@ Examples:
 %prog show <nr>                         # show issue <nr>
 %prog <nr>                              # same as: %prog show <nr>
 %prog <nr> -w                           # show issue <nr>'s GitHub page in web browser
-%prog open                              # create a new issue (with $EDITOR)
-%prog close <nr>                        # close issue <nr>
-%prog open <nr>                         # reopen issue <nr>
-%prog edit <nr>                         # edit issue <nr> (with $EDITOR)
+%prog open (o)                          # create a new issue (with $EDITOR)
+%prog close (c) <nr>                    # close issue <nr>
+%prog open (o) <nr>                     # reopen issue <nr>
+%prog edit (e) <nr>                     # edit issue <nr> (with $EDITOR)
 %prog label add <label> <nr>            # add <label> to issue <nr>
 %prog label remove <label> <nr>         # remove <label> from issue <nr>
 %prog search <term> [-s open|closed]    # search for <term> in open or closed issues (default: open)
@@ -315,6 +315,8 @@ command-line interface to GitHub's Issues API (v2)"""
         search_term = " ".join(args[1:])
         args = (args[0], search_term)
         
+    cmd = {'o': 'open', 'c': 'close', 'e': 'edit'}.get(cmd, cmd)
+    
     if cmd == 'open' and len(args) > 1:
         cmd = 'reopen'
     

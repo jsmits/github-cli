@@ -73,10 +73,10 @@ do this (note: with the -r option, commands can be invoked from anywhere):
   ghi show <nr>                         # show issue <nr>
   ghi <nr>                              # same as: ghi show <nr>
   ghi <nr> -w                           # show issue <nr>'s GitHub page in web browser
-  ghi open                              # create a new issue (with $EDITOR)
-  ghi close <nr>                        # close issue <nr>
-  ghi open <nr>                         # reopen issue <nr>
-  ghi edit <nr>                         # edit issue <nr> (with $EDITOR)
+  ghi open (o)                          # create a new issue (with $EDITOR)
+  ghi close (c) <nr>                    # close issue <nr>
+  ghi open (o) <nr>                     # reopen issue <nr>
+  ghi edit (e) <nr>                     # edit issue <nr> (with $EDITOR)
   ghi label add <label> <nr>            # add <label> to issue <nr>
   ghi label remove <label> <nr>         # remove <label> from issue <nr>
   ghi search <term> [-s open|closed]    # search for <term> in open or closed issues (default: open)
@@ -102,5 +102,3 @@ do this (note: with the -r option, commands can be invoked from anywhere):
     -w, --web, --webbrowser
                           show issue(s) GitHub page in web browser (only for
                           list and show commands) [default: False]
-
-   
