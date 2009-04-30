@@ -92,9 +92,9 @@ do this (note: with the -r option, commands can be invoked from anywhere):
     -v, --verbose         show issue details (only for list and search commands)
                           [default: False]
     -s STATE, --state=STATE
-                          specify state (only for list and search commands)
-                          [choices: (o, open), (c, closed), (a, all); default:
-                          open]
+                          specify state (only for list and search (except `all`)
+                          commands) choices are: open (o), closed (c), all (a)
+                          [default: open]
     -r REPO, --repo=REPO, --repository=REPO
                           specify a repository (format: `user/repo` or just
                           `repo` (latter will get the user from the global git

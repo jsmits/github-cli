@@ -279,8 +279,8 @@ command-line interface to GitHub's Issues API (v2)"""
         "commands) [default: False]")
     parser.add_option("-s", "--state", action="store", dest="state", 
         type='choice', choices=['o', 'open', 'c', 'closed', 'a', 'all'], 
-        default='open', help="specify state (only for list and search "\
-        "commands) [choices: (o, open), (c, closed), (a, all); default: open]")
+        default='open', help="specify state (only for list and search (except `all`) "\
+        "commands) choices are: open (o), closed (c), all (a) [default: open]")
     parser.add_option("-r", "--repo", "--repository", action="store", 
         dest="repo", help="specify a repository (format: "\
             "`user/repo` or just `repo` (latter will get the user from the "\
