@@ -249,26 +249,26 @@ def main():
     usage = """usage: %prog command [args] [options]
 
 Examples:
-%prog list [-s open|closed|all]         # show open, closed or all issues (default: open)
-%prog [-s o|c|a] -v                     # same as above, but with issue details
-%prog                                   # same as: %prog list
-%prog -v                                # same as: %prog list -v
-%prog -v | less                         # pipe through less command
-%prog [-s o|c] -w                       # show issues' GitHub page in web browser (default: open)
-%prog show <nr>                         # show issue <nr>
-%prog <nr>                              # same as: %prog show <nr>
-%prog <nr> -w                           # show issue <nr>'s GitHub page in web browser
-%prog open (o)                          # create a new issue (with $EDITOR)
-%prog close (c) <nr>                    # close issue <nr>
-%prog open (o) <nr>                     # reopen issue <nr>
-%prog edit (e) <nr>                     # edit issue <nr> (with $EDITOR)
-%prog label add <label> <nr>            # add <label> to issue <nr>
-%prog label remove <label> <nr>         # remove <label> from issue <nr>
-%prog search <term> [-s open|closed]    # search for <term> in open or closed issues (default: open)
-%prog search <term> [-s o|c] -v         # same as above, but with details
-%prog comment <nr>                      # create a comment for issue <nr> (with $EDITOR)
-%prog -r <user>/<repo>                  # specify a repository (can be used for all commands)
-%prog -r <repo>                         # specify a repository (gets user from global git config)"""
+%prog list [-s open|closed|all]          # show open, closed or all issues (default: open)
+%prog [-s o|c|a] -v                      # same as above, but with issue details
+%prog                                    # same as: %prog list
+%prog -v                                 # same as: %prog list -v
+%prog -v | less                          # pipe through less command
+%prog [-s o|c] -w                        # show issues' GitHub page in web browser (default: open)
+%prog show <nr>                          # show issue <nr>
+%prog <nr>                               # same as: %prog show <nr>
+%prog <nr> -w                            # show issue <nr>'s GitHub page in web browser
+%prog open (o)                           # create a new issue (with $EDITOR)
+%prog close (c) <nr>                     # close issue <nr>
+%prog open (o) <nr>                      # reopen issue <nr>
+%prog edit (e) <nr>                      # edit issue <nr> (with $EDITOR)
+%prog label add (al) <label> <nr>        # add <label> to issue <nr>
+%prog label remove (rl) <label> <nr>     # remove <label> from issue <nr>
+%prog search (s) <term> [-s open|closed] # search for <term> in open or closed issues (default: open)
+%prog s <term> [-s o|c] -v               # same as above, but with details
+%prog comment (m) <nr>                   # create a comment for issue <nr> (with $EDITOR)
+%prog -r <user>/<repo>                   # specify a repository (can be used for all commands)
+%prog -r <repo>                          # specify a repository (gets user from global git config)"""
     
     description = """Description:
 command-line interface to GitHub's Issues API (v2)"""
@@ -309,16 +309,23 @@ command-line interface to GitHub's Issues API (v2)"""
         except: 
             pass
     else:
-        cmd = "list" # default
+        cmd = 'list' # default command
         
     if cmd == 'search':
         search_term = " ".join(args[1:])
         args = (args[0], search_term)
-        
-    cmd = {'o': 'open', 'c': 'close', 'e': 'edit'}.get(cmd, cmd)
     
+    # handle command aliases    
+    cmd = {'o': 'open', 'c': 'close', 'e': 'edit', 'm': 'comment', 
+        's': 'search'}.get(cmd, cmd)
     if cmd == 'open' and len(args) > 1:
         cmd = 'reopen'
+    if cmd == 'al' or cmd == 'rl':
+        alias = cmd
+        cmd = 'label'
+        args_list = [cmd, {'a': 'add', 'r': 'remove'}[alias[0]]]
+        args_list.extend(args[1:])
+        args = tuple(args_list)
     
     try:
         repository = kwargs.get('repo')
