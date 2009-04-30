@@ -75,7 +75,7 @@ do this (note: with the -r option, commands can be invoked from anywhere):
   ghi <nr> -w                           # show issue <nr>'s GitHub page in web browser
   ghi open                              # create a new issue (with $EDITOR)
   ghi close <nr>                        # close issue <nr>
-  ghi reopen <nr>                       # reopen issue <nr>
+  ghi open <nr>                         # reopen issue <nr>
   ghi edit <nr>                         # edit issue <nr> (with $EDITOR)
   ghi label add <label> <nr>            # add <label> to issue <nr>
   ghi label remove <label> <nr>         # remove <label> from issue <nr>

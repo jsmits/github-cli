@@ -179,7 +179,7 @@ class Commands(object):
         pprint_issue(issue)
         
     def reopen(self, number=None, **kwargs):
-        validate_number(number, example="%s reopen 1" % get_prog())
+        validate_number(number, example="%s open 1" % get_prog())
         result = self.__submit('reopen', number)
         issue = get_key(result, 'issue')
         print
@@ -260,7 +260,7 @@ Examples:
 %prog <nr> -w                           # show issue <nr>'s GitHub page in web browser
 %prog open                              # create a new issue (with $EDITOR)
 %prog close <nr>                        # close issue <nr>
-%prog reopen <nr>                       # reopen issue <nr>
+%prog open <nr>                         # reopen issue <nr>
 %prog edit <nr>                         # edit issue <nr> (with $EDITOR)
 %prog label add <label> <nr>            # add <label> to issue <nr>
 %prog label remove <label> <nr>         # remove <label> from issue <nr>
@@ -314,6 +314,9 @@ command-line interface to GitHub's Issues API (v2)"""
     if cmd == 'search':
         search_term = " ".join(args[1:])
         args = (args[0], search_term)
+        
+    if cmd == 'open' and len(args) > 1:
+        cmd = 'reopen'
     
     try:
         repository = kwargs.get('repo')
