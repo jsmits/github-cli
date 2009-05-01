@@ -34,6 +34,10 @@ class TestRunner(Command):
         tests = TestLoader().loadTestsFromNames(testfiles)
         t = TextTestRunner(verbosity = 1)
         t.run(tests)
+        
+cur_dir = os.path.dirname(__file__)
+readme = open(os.path.join(cur_dir, 'README.rst')).read()
+long_description = readme
 
 setup(
     name = "github-cli",
@@ -41,10 +45,7 @@ setup(
     url = 'http://github.com/jsmits/github-cli',
     license = 'BSD',
     description = "A command-line interface to the GitHub Issues API v2.",
-    long_description = """`github-cli <http://github.com/jsmits/github-cli/>`_ 
-provides a script called ``ghi``, that can be used to access all of `GitHub 
-<http://www.github.com/>`_'s documented `Issues API <http://develop.github.com/p/issues.html>`_ 
-(v2) functionality from your command-line""",
+    long_description = long_description,
     author = 'Sander Smits',
     author_email = 'jhmsmits@gmail.com',
     packages = find_packages('src'),
