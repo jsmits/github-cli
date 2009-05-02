@@ -11,28 +11,34 @@ except ImportError:
     sys.exit(1)
 
 from github.utils import urlopen2, get_remote_info, edit_text, \
-    get_remote_info_from_option, get_prog
-
-def pprint_issue(issue, verbose=True):
+    get_remote_info_from_option, get_prog, print_by_page
+    
+def format_issue(issue, verbose=True):
+    output = []
     if verbose:
         indent = ""
     else:
         indent = " " * (5 - len(str(issue['number'])))
     title = "%s%s. %s" % (indent, issue['number'], issue['title'])
-    print title
+    output.append(title)
     if verbose:
-        print "-" * len(title)
+        output.append("-" * len(title))
         if issue['body']:
-            print "%s" % issue['body']
-        print
-        print "    state: %s" % issue['state']
-        print "     user: %s" % issue['user']
-        print "    votes: %s" % issue['votes']
-        print "  created: %s" % issue['created_at']
+            output.append("%s" % issue['body'])
+        output.append("    state: %s" % issue['state'])
+        output.append("     user: %s" % issue['user'])
+        output.append("    votes: %s" % issue['votes'])
+        output.append("  created: %s" % issue['created_at'])
         updated = issue.get('updated_at')
         if updated and not updated == issue['created_at']:
-            print "  updated: %s" % updated
-        print
+            output.append("  updated: %s" % updated)
+    return output
+
+def pprint_issue(issue, verbose=True):
+    lines = format_issue(issue, verbose)
+    lines.insert(0, " ") # empty first line
+    lines.append(" ") # empty last line
+    print "\n".join(lines)
     
 def handle_error(result):
     output = []
@@ -116,11 +122,16 @@ class Commands(object):
             sys.exit(1)
         search_term_quoted = urllib.quote_plus(search_term)
         search_term_quoted = search_term_quoted.replace(".", "%2E")
+        print "+++ searching issues, please wait... +++"
         result = self.__submit('search', search_term, state)
         issues = get_key(result, 'issues')
-        print "# searching for '%s' returned %s issues" % (search_term, len(issues))
+        header = "# searching for '%s' returned %s issues" % (search_term, len(issues))
+        out = [header]
         for issue in issues:
-            pprint_issue(issue, verbose)
+            lines = format_issue(issue, verbose)
+            out.extend(lines)
+            out.append(" ")
+        print_by_page("\n".join(out))
         
     def list(self, state='open', verbose=False, webbrowser=False, **kwargs):
         if webbrowser:
@@ -139,19 +150,24 @@ class Commands(object):
         if state == 'all':
             states = ['open', 'closed']
         else:
-            states = [state] 
+            states = [state]
+        print "+++ fetching issues, please wait... +++"
+        out = []
         for st in states:
             result = self.__submit('list', st)
             issues = get_key(result, 'issues')
             if issues:
                 header = "# %s issues on %s/%s" % (st, self.user, self.repo)
-                print header
+                out.append(header)
                 for issue in issues:
-                    pprint_issue(issue, verbose)
+                    lines = format_issue(issue, verbose)
+                    out.extend(lines)
+                    out.append(" ")
             else:
-                print "no %s issues available" % st
+                out.append("no %s issues available" % st)
             if not st == states[-1]:
-                print # new line between states
+                out.append(" ") # new line between states
+        print_by_page("\n".join(out))
         
     def show(self, number=None, webbrowser=False, **kwargs):
         validate_number(number, example="%s show 1" % get_prog())
@@ -165,28 +181,24 @@ class Commands(object):
             else:
                 sys.exit(0)
         issue = self.__get_issue(number)
-        print
         pprint_issue(issue)
         
     def open(self, **kwargs):
         post_data = create_edit_issue()
         result = self.__submit('open', data=post_data)
         issue = get_key(result, 'issue')
-        print
         pprint_issue(issue)
         
     def close(self, number=None, **kwargs):
         validate_number(number, example="%s close 1" % get_prog())
         result = self.__submit('close', number)
         issue = get_key(result, 'issue')
-        print
         pprint_issue(issue)
         
     def reopen(self, number=None, **kwargs):
         validate_number(number, example="%s open 1" % get_prog())
         result = self.__submit('reopen', number)
         issue = get_key(result, 'issue')
-        print
         pprint_issue(issue)
         
     def edit(self, number=None, **kwargs):
@@ -200,7 +212,6 @@ class Commands(object):
             sys.exit(1)
         result = self.__submit('edit', number, data=post_data)
         issue = get_key(result, 'issue')
-        print
         pprint_issue(issue)
         
     def label(self, command, label, number=None, **kwargs):
@@ -256,7 +267,6 @@ Examples:
 %prog [-s o|c|a] -v                      # same as above, but with issue details
 %prog                                    # same as: %prog list
 %prog -v                                 # same as: %prog list -v
-%prog -v | less                          # pipe through less command
 %prog [-s o|c] -w                        # show issues' GitHub page in web browser (default: open)
 %prog show <nr>                          # show issue <nr>
 %prog <nr>                               # same as: %prog show <nr>

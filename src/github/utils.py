@@ -100,4 +100,19 @@ def get_prog():
         return os.path.split(sys.argv[0])[1]
     else:
         return '<prog>'
+        
+def print_by_page(text):
+    if hasattr(sys.stdout, 'isatty') and sys.stdout.isatty():
+        viewer = 'more -EMR'
+        proc = subprocess.Popen([viewer], shell=True, stdin=subprocess.PIPE, 
+            stderr=subprocess.PIPE)
+        try:
+            stdout, stderr = proc.communicate(text)
+        except OSError:
+            pass
+        else:
+            if stderr: # probably no 'more' available on this system
+                sys.stdout.write(text)
+            return
+    sys.stdout.write(text)
 

@@ -68,7 +68,6 @@ do this (note: with the -r option, commands can be invoked from anywhere):
   ghi [-s o|c|a] -v                      # same as above, but with issue details
   ghi                                    # same as: ghi list
   ghi -v                                 # same as: ghi list -v
-  ghi -v | less                          # pipe through less command
   ghi [-s o|c] -w                        # show issues' GitHub page in web browser (default: open)
   ghi show <nr>                          # show issue <nr>
   ghi <nr>                               # same as: ghi show <nr>
