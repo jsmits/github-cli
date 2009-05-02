@@ -32,12 +32,12 @@ def format_issue(issue, verbose=True):
         updated = issue.get('updated_at')
         if updated and not updated == issue['created_at']:
             output.append("  updated: %s" % updated)
+        output.append(" ")
     return output
 
 def pprint_issue(issue, verbose=True):
     lines = format_issue(issue, verbose)
-    lines.insert(0, " ") # empty first line
-    lines.append(" ") # empty last line
+    lines.insert(0, " ") # insert empty first line
     print "\n".join(lines)
     
 def handle_error(result):
@@ -130,7 +130,6 @@ class Commands(object):
         for issue in issues:
             lines = format_issue(issue, verbose)
             out.extend(lines)
-            out.append(" ")
         print_by_page("\n".join(out))
         
     def list(self, state='open', verbose=False, webbrowser=False, **kwargs):
@@ -162,7 +161,6 @@ class Commands(object):
                 for issue in issues:
                     lines = format_issue(issue, verbose)
                     out.extend(lines)
-                    out.append(" ")
             else:
                 out.append("no %s issues available" % st)
             if not st == states[-1]:
