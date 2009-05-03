@@ -113,7 +113,7 @@ class Pager(object):
         self.file = sys.stdout # ultimate fallback
 
         if hasattr(sys.stdout, 'isatty') and sys.stdout.isatty():
-            pager_commands = ['more -EMR', 'more', 'less -EMR', 'less']
+            pager_commands = ['more -MR', 'more', 'less -MR', 'less']
             for cmd in pager_commands:
                 if hasattr(os, 'system') and \
                               os.system('(%s) 2>/dev/null' % cmd) == 0:
