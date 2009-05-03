@@ -101,18 +101,30 @@ def get_prog():
     else:
         return '<prog>'
         
-def print_by_page(text):
-    if hasattr(sys.stdout, 'isatty') and sys.stdout.isatty():
-        viewer = 'more -EMR'
-        proc = subprocess.Popen([viewer], shell=True, stdin=subprocess.PIPE, 
-            stderr=subprocess.PIPE)
-        try:
-            stdout, stderr = proc.communicate(text)
-        except OSError:
-            pass
+class Pager(object):
+    """enable paging for multiple writes"""
+    
+    def __init__(self):
+        self.proc = None
+        
+        if hasattr(sys.stdout, 'isatty') and sys.stdout.isatty():
+            pager = 'more -EMR'
+            self.proc = subprocess.Popen([pager], shell=True, 
+                stdin=subprocess.PIPE, stderr=subprocess.PIPE)
+            self.file = self.proc.stdin
         else:
-            if stderr: # probably no 'more' available on this system
-                sys.stdout.write(text)
-            return
-    sys.stdout.write(text)
+            self.file = sys.stdout
+
+    def write(self, text=""):
+        try:
+            self.file.write("%s\n" % text)
+        except:
+            # in case the pager is not available
+            self.file = sys.stdout
+            self.write(text) # known issue: sometimes, does not show text on first write
+        
+    def close(self): 
+        if self.proc: 
+            self.file.close() 
+            self.proc.wait()
 

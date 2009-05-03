@@ -11,7 +11,7 @@ except ImportError:
     sys.exit(1)
 
 from github.utils import urlopen2, get_remote_info, edit_text, \
-    get_remote_info_from_option, get_prog, print_by_page
+    get_remote_info_from_option, get_prog, Pager
     
 def format_issue(issue, verbose=True):
     output = []
@@ -122,15 +122,15 @@ class Commands(object):
             sys.exit(1)
         search_term_quoted = urllib.quote_plus(search_term)
         search_term_quoted = search_term_quoted.replace(".", "%2E")
-        print "+++ searching issues, please wait... +++"
         result = self.__submit('search', search_term, state)
         issues = get_key(result, 'issues')
         header = "# searching for '%s' returned %s issues" % (search_term, len(issues))
-        out = [header]
+        printer = Pager()
+        printer.write(header)
         for issue in issues:
             lines = format_issue(issue, verbose)
-            out.extend(lines)
-        print_by_page("\n".join(out))
+            printer.write("\n".join(lines))
+        printer.close()
         
     def list(self, state='open', verbose=False, webbrowser=False, **kwargs):
         if webbrowser:
@@ -150,22 +150,21 @@ class Commands(object):
             states = ['open', 'closed']
         else:
             states = [state]
-        print "+++ fetching issues, please wait... +++"
-        out = []
+        printer = Pager()
         for st in states:
+            header = "# %s issues on %s/%s" % (st, self.user, self.repo)
+            printer.write(header)
             result = self.__submit('list', st)
             issues = get_key(result, 'issues')
             if issues:
-                header = "# %s issues on %s/%s" % (st, self.user, self.repo)
-                out.append(header)
                 for issue in issues:
                     lines = format_issue(issue, verbose)
-                    out.extend(lines)
+                    printer.write("\n".join(lines))
             else:
-                out.append("no %s issues available" % st)
+                printer.write("no %s issues available" % st)
             if not st == states[-1]:
-                out.append(" ") # new line between states
-        print_by_page("\n".join(out))
+                printer.write() # new line between states
+        printer.close()
         
     def show(self, number=None, webbrowser=False, **kwargs):
         validate_number(number, example="%s show 1" % get_prog())
