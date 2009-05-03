@@ -111,6 +111,7 @@ class Pager(object):
     def __init__(self):
         self.proc = None
         self.file = sys.stdout # ultimate fallback
+        self.cmd = ''
 
         if hasattr(sys.stdout, 'isatty') and sys.stdout.isatty():
             pager_commands = ['more -MR', 'more', 'less -MR', 'less']
@@ -120,6 +121,7 @@ class Pager(object):
                     self.proc = subprocess.Popen([cmd], shell=True, 
                         stdin=subprocess.PIPE, stderr=subprocess.PIPE)
                     self.file = self.proc.stdin
+                    self.cmd = cmd
                     break
 
     def write(self, text=""):
@@ -130,16 +132,14 @@ class Pager(object):
             self.file = sys.stdout
             self.file.write("%s\n" % text)
 
-    def close(self): 
+    def close(self):
+        if 'less' in self.cmd:
+            self.write("press q to quit")
         if self.proc: 
             self.file.close()
             try:
                 self.proc.wait()
             except KeyboardInterrupt:
-                # try to kill the process 'by hand'
-                try:
-                    os.system("kill -9 %s" % self.proc.pid)
-                except:
-                    pass
+                # TODO: should kill the self.proc here gracefully
                 sys.exit(0) # close silently no matter what
 
