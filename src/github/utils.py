@@ -136,5 +136,10 @@ class Pager(object):
             try:
                 self.proc.wait()
             except KeyboardInterrupt:
+                # try to kill the process 'by hand'
+                try:
+                    os.system("kill -9 %s" % self.proc.pid)
+                except:
+                    pass
                 sys.exit(0) # close silently no matter what
 
