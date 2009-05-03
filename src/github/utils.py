@@ -132,6 +132,9 @@ class Pager(object):
 
     def close(self): 
         if self.proc: 
-            self.file.close() 
-            self.proc.wait()
+            self.file.close()
+            try:
+                self.proc.wait()
+            except KeyboardInterrupt:
+                sys.exit(0) # close silently no matter what
 
