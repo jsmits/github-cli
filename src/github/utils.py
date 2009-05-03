@@ -102,27 +102,34 @@ def get_prog():
         return '<prog>'
         
 class Pager(object):
-    """enable paging for multiple writes"""
-    
+    """enable paging for multiple writes
+
+    see http://svn.python.org/view/python/branches/release25-maint/Lib/pydoc.py?view=markup
+    (getpager()) for handling different circumstances or platforms
+    """
+
     def __init__(self):
         self.proc = None
-        
+        self.file = sys.stdout # ultimate fallback
+
         if hasattr(sys.stdout, 'isatty') and sys.stdout.isatty():
-            pager = 'more -EMR'
-            self.proc = subprocess.Popen([pager], shell=True, 
-                stdin=subprocess.PIPE, stderr=subprocess.PIPE)
-            self.file = self.proc.stdin
-        else:
-            self.file = sys.stdout
+            pager_commands = ['more -EMR', 'more', 'less -EMR', 'less']
+            for cmd in pager_commands:
+                if hasattr(os, 'system') and \
+                              os.system('(%s) 2>/dev/null' % cmd) == 0:
+                    self.proc = subprocess.Popen([cmd], shell=True, 
+                        stdin=subprocess.PIPE, stderr=subprocess.PIPE)
+                    self.file = self.proc.stdin
+                    break
 
     def write(self, text=""):
         try:
             self.file.write("%s\n" % text)
         except:
-            # in case the pager is not available
+            # in case the pager cmd fails unexpectedly
             self.file = sys.stdout
-            self.write(text) # known issue: sometimes, does not show text on first write
-        
+            self.file.write("%s\n" % text)
+
     def close(self): 
         if self.proc: 
             self.file.close() 

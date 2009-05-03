@@ -5,7 +5,7 @@ from unittest import TextTestRunner, TestLoader
 from glob import glob
 from os.path import splitext, basename, join as pjoin, walk
 
-version = '0.2.2'
+version = '0.2.3'
 
 class TestRunner(Command):
     """run tests with setup.py
