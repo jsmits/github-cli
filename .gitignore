@@ -2,8 +2,9 @@ build/
 dist/
 *.egg-info
 *.pyc
+*.class
 
 .DS_Store
 *.tmproj
 
-*.class
+docs/build/
