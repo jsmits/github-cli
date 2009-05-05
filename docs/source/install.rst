@@ -51,7 +51,8 @@ Change the version to whatever version you would like to view and/or download.
 GitHub
 ======
 
-Of course, you can always get the latest source code from the git repository:
+Of course, you can always get the latest source code from the 
+`git repository <http://github.com/jsmits/github-cli/>`_:
 
 ::
 
