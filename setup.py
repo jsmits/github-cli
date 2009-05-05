@@ -10,7 +10,7 @@ long_description = readme
 setup(
     name = "github-cli",
     version = version,
-    url = 'http://github.com/jsmits/github-cli',
+    url = 'http://jsmits.github.com/github-cli',
     license = 'BSD',
     description = "A command-line interface to the GitHub Issues API v2.",
     long_description = long_description,
