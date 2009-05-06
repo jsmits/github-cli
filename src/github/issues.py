@@ -260,25 +260,32 @@ def main():
     usage = """usage: %prog command [args] [options]
 
 Examples:
-%prog list [-s open|closed|all]          # show open, closed or all issues (default: open)
-%prog [-s o|c|a] -v                      # same as above, but with issue details
-%prog                                    # same as: %prog list
-%prog -v                                 # same as: %prog list -v
-%prog [-s o|c] -w                        # show issues' GitHub page in web browser (default: open)
-%prog show <nr>                          # show issue <nr>
-%prog <nr>                               # same as: %prog show <nr>
-%prog <nr> -w                            # show issue <nr>'s GitHub page in web browser
-%prog open (o)                           # create a new issue (with $EDITOR)
-%prog close (c) <nr>                     # close issue <nr>
-%prog open (o) <nr>                      # reopen issue <nr>
-%prog edit (e) <nr>                      # edit issue <nr> (with $EDITOR)
-%prog label add (al) <label> <nr>        # add <label> to issue <nr>
-%prog label remove (rl) <label> <nr>     # remove <label> from issue <nr>
-%prog search (s) <term> [-s open|closed] # search for <term> in open or closed issues (default: open)
-%prog s <term> [-s o|c] -v               # same as above, but with details
-%prog comment (m) <nr>                   # create a comment for issue <nr> (with $EDITOR)
-%prog -r <user>/<repo>                   # specify a repository (can be used for all commands)
-%prog -r <repo>                          # specify a repository (gets user from global git config)"""
+%prog list [-s open|closed|all]       show open, closed or all issues 
+                                    (default: open)
+%prog [-s o|c|a] -v                   same as above, but with issue details
+%prog                                 same as: %prog list
+%prog -v                              same as: %prog list -v
+%prog [-s o|c] -w                     show issues' GitHub page in web browser 
+                                    (default: open)
+%prog show <nr>                       show issue <nr>
+%prog <nr>                            same as: %prog show <nr>
+%prog <nr> -w                         show issue <nr>'s GitHub page in web 
+                                    browser
+%prog open (o)                        create a new issue (with $EDITOR)
+%prog close (c) <nr>                  close issue <nr>
+%prog open (o) <nr>                   reopen issue <nr>
+%prog edit (e) <nr>                   edit issue <nr> (with $EDITOR)
+%prog label add (al) <label> <nr>     add <label> to issue <nr>
+%prog label remove (rl) <label> <nr>  remove <label> from issue <nr>
+%prog search (s) <term>               search for <term> (default: open)
+%prog s <term> -s closed              search in closed issues
+%prog s <term> [-s o|c] -v            same as above, but with details
+%prog comment (m) <nr>                create a comment for issue <nr> 
+                                    (with $EDITOR)
+%prog -r <user>/<repo>                specify a repository (can be used for 
+                                    all commands)
+%prog -r <repo>                       specify a repository (gets user from 
+                                    global git config)"""
     
     description = """Description:
 command-line interface to GitHub's Issues API (v2)"""
