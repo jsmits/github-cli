@@ -1,7 +1,7 @@
 import os
 from setuptools import setup, find_packages
 
-version = '0.2.4'
+version = '0.2.5'
 
 cur_dir = os.path.dirname(__file__)
 readme = open(os.path.join(cur_dir, 'README.rst')).read()

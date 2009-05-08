@@ -7,6 +7,7 @@ import re
 import urllib2
 import tempfile
 import subprocess
+import textwrap
 
 opener = build_opener(HTTPCookieProcessor)
 
@@ -142,4 +143,12 @@ class Pager(object):
             except KeyboardInterrupt:
                 # TODO: should kill the self.proc here gracefully
                 sys.exit(0) # close silently no matter what
+                
+def wrap_text(text, width=79):
+    if text:
+        output = []
+        for part in text.splitlines():
+            output.append(textwrap.fill(part, width))
+        return "\n".join(output)
+    return text
 

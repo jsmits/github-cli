@@ -11,7 +11,7 @@ except ImportError:
     sys.exit(1)
 
 from github.utils import urlopen2, get_remote_info, edit_text, \
-    get_remote_info_from_option, get_prog, Pager
+    get_remote_info_from_option, get_prog, Pager, wrap_text
     
 def format_issue(issue, verbose=True):
     output = []
@@ -20,11 +20,18 @@ def format_issue(issue, verbose=True):
     else:
         indent = " " * (5 - len(str(issue['number'])))
     title = "%s%s. %s" % (indent, issue['number'], issue['title'])
-    output.append(title)
+    if not verbose:
+        output.append(title[:80])
     if verbose:
-        output.append("-" * len(title))
+        title = wrap_text(title)
+        output.append(title)
+        if len(title) > 79:
+            output.append("-" * 79)
+        else:
+            output.append("-" * len(title))
         if issue['body']:
-            output.append("%s" % issue['body'])
+            body = wrap_text(issue['body'])
+            output.append(body)
         output.append("    state: %s" % issue['state'])
         output.append("     user: %s" % issue['user'])
         output.append("    votes: %s" % issue['votes'])
