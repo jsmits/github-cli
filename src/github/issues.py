@@ -278,8 +278,8 @@ Examples:
 %prog label add (al) <label> <nr>     add <label> to issue <nr>
 %prog label remove (rl) <label> <nr>  remove <label> from issue <nr>
 %prog search (s) <term>               search for <term> (default: open)
-%prog s <term> -s closed              search in closed issues
 %prog s <term> [-s o|c] -v            same as above, but with details
+%prog s <term> -s closed              only search in closed issues
 %prog comment (m) <nr>                create a comment for issue <nr> 
                                     (with $EDITOR)
 %prog -r <user>/<repo>                specify a repository (can be used for 

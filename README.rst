@@ -82,8 +82,8 @@ do this (note: with the -r option, commands can be invoked from anywhere):
   ghi label add (al) <label> <nr>     add <label> to issue <nr>
   ghi label remove (rl) <label> <nr>  remove <label> from issue <nr>
   ghi search (s) <term>               search for <term> (default: open)
-  ghi s <term> -s closed              search in closed issues
   ghi s <term> [-s o|c] -v            same as above, but with details
+  ghi s <term> -s closed              only search in closed issues
   ghi comment (m) <nr>                create a comment for issue <nr> 
                                       (with $EDITOR)
   ghi -r <user>/<repo>                specify a repository (can be used for 
