@@ -1,18 +1,21 @@
 import os
 from setuptools import setup, find_packages
 
-version = '0.2.5'
+version = '0.2.5.1'
 
+description = "A command-line interface to the GitHub Issues API v2."
 cur_dir = os.path.dirname(__file__)
-readme = open(os.path.join(cur_dir, 'README.rst')).read()
-long_description = readme
+try:
+    long_description = open(os.path.join(cur_dir, 'README.rst')).read()
+except:
+    long_description = description
 
 setup(
     name = "github-cli",
     version = version,
     url = 'http://jsmits.github.com/github-cli',
     license = 'BSD',
-    description = "A command-line interface to the GitHub Issues API v2.",
+    description = description,
     long_description = long_description,
     author = 'Sander Smits',
     author_email = 'jhmsmits@gmail.com',
