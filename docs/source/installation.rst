@@ -2,26 +2,29 @@
 Installation
 ============
 
+*on most UNIX-like systems, you'll probably need to run the following 
+`install` commands as root or by using sudo*
+
 pip
 ===
 
 ::
 
-  $ sudo pip install github-cli
+  $ pip install github-cli
 
 easy_install
 ============
 
 ::
 
-  $ sudo easy_install github-cli
+  $ easy_install github-cli
 
 source
 ======
 
 ::
 
-  $ sudo pip install -e git://github.com/jsmits/github-cli.git#egg=github-cli
+  $ pip install -e git://github.com/jsmits/github-cli.git#egg=github-cli
 
 *or*
 
@@ -29,10 +32,10 @@ source
 
   $ git clone git://github.com/jsmits/github-cli.git
   $ cd github-cli
-  $ python setup.py build
-  $ sudo python setup.py install
+  $ python setup.py install
   
-the ``ghi`` executable will be installed into a system ``bin`` directory
+as a result, the ``ghi`` executable will be installed into a system ``bin`` 
+directory
 
 ========  
 Download
