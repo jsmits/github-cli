@@ -1,7 +1,7 @@
 import os
 from setuptools import setup, find_packages
 
-version = '0.2.6'
+version = '0.2.6.1'
 
 description = "A command-line interface to the GitHub Issues API v2."
 cur_dir = os.path.dirname(__file__)
@@ -13,7 +13,7 @@ except:
 setup(
     name = "github-cli",
     version = version,
-    url = 'http://jsmits.github.com/github-cli',
+    url = 'http://packages.python.org/github-cli',
     license = 'BSD',
     description = description,
     long_description = long_description,
