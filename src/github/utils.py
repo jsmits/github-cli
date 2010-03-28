@@ -24,27 +24,30 @@ def urlopen2(url, data=None, auth=True, user_agent='github-cli'):
     headers = {'User-Agent' : user_agent}
     try:
         return opener.open(Request(url, data, headers))
-    except urllib2.HTTPError:
-        raise Exception("server problem")
+    except urllib2.HTTPError, info:
+        raise Exception("server problem (%s)" % info)
     except urllib2.URLError:
         raise Exception("connection problem")
     
 def get_remote_info():
-    command = "git config --get remote.origin.url"
-    stdout, stderr = Popen(command, shell=True, stdin=PIPE, stdout=PIPE, 
-        stderr=PIPE).communicate()
-    if stderr:
-        for line in stderr.splitlines():
-            print line.lower()
-    elif stdout:
-        line = stdout.strip()
-        pattern = re.compile(r'([^:/]+)/([^/]+).git$')
-        result = pattern.search(line)
-        if result:
-            return result.groups()
-        else:
-            raise Exception("invalid user and repo name")
-    raise Exception("not a git repository")
+    commands = ("git config --get remote.origin.url", "hg paths default")
+    for command in commands:
+        stdout, stderr = Popen(command, shell=True, stdin=PIPE, stdout=PIPE, 
+            stderr=PIPE).communicate()
+        if stderr:
+            for line in stderr.splitlines():
+                print line.lower()
+        elif stdout:
+            line = stdout.strip()
+            if not "github.com" in line:
+                raise Exception("repository needs to be hosted on github.com")
+            pattern = re.compile(r'([^:/]+)/([^/]+).git$')
+            result = pattern.search(line)
+            if result:
+                return result.groups()
+            else:
+                raise Exception("invalid user and repo name")
+    raise Exception("not a valid repository or not hosted on github.com")
     
 def get_remote_info_from_option(repository):
     if "/" in repository:
