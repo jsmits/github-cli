@@ -18,7 +18,8 @@ def test_commands():
             if type(exp) == type(Exception):
                 assert_raises(exp, main)
             else:
-                assert main() == exp
+                output = main()
+                assert output == exp
         check_command.description = "command: %s %s" % (prog, cmd)
         yield check_command, cmd, exp
 
@@ -32,7 +33,7 @@ test_input = (
     ('-s a', None), ('-s a -v', None), ('list -s close', SystemExit), 
     
     # show commands
-    ('show 1', None), ('1', None), ('17288182', "error: issue not found"),
+    ('show 1', None), ('1', None), ('17288182', "error: server problem (HTTP Error 403: Forbidden)"),
     
     # state modification commands
     ('close 1', None), ('open 1', None), ('c 1', None), ('close 1', None), 
