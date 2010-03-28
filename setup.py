@@ -1,7 +1,7 @@
 import os
 from setuptools import setup, find_packages
 
-version = '0.2.5.2'
+version = '0.2.6'
 
 description = "A command-line interface to the GitHub Issues API v2."
 cur_dir = os.path.dirname(__file__)
