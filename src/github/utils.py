@@ -30,7 +30,11 @@ def urlopen2(url, data=None, auth=True, user_agent='github-cli'):
         raise Exception("connection problem")
     
 def get_remote_info():
-    commands = ("git config --get remote.origin.url", "hg paths default")
+    commands = (
+        "git config --get remote.origin.url",
+        "git config --get remote.github.url",
+        "hg paths default"
+    )
     for command in commands:
         stdout, stderr = Popen(command, shell=True, stdin=PIPE, stdout=PIPE, 
             stderr=PIPE).communicate()

@@ -1,8 +1,10 @@
 Usage
 =====
 
-Inside a git working directory with an origin that is hosted on GitHub, you can 
-do this (note: with the -r option, commands can be invoked from anywhere):
+Inside a git working directory with a remote repository that is hosted on
+GitHub (remote named either "origin" or "github"), you can do this (note: with
+the -r option, commands can be invoked from anywhere):
+
 
 ::
 

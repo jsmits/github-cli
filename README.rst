@@ -58,8 +58,9 @@ you can find the username and API token on your GitHub's account page
 
 usage
 *****
-inside a git working directory with an origin that is hosted on GitHub, you can 
-do this (note: with the -r option, commands can be invoked from anywhere):
+inside a git working directory with a remote repository that is hosted on
+GitHub (remote named either "origin" or "github"), you can do this (note: with
+the -r option, commands can be invoked from anywhere):
 
 ::
 
