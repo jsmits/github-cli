@@ -1,8 +1,9 @@
 Usage
 =====
 
-Inside a git working directory with a remote repository that is hosted on
-GitHub (remote named either "origin" or "github"), you can do this (note: with
+From within a working directory with a remote that is hosted on
+GitHub (remote named either ``origin`` or ``github`` for git repositories or 
+``default`` or ``github`` for mercurial/`hg-git <http://hg-git.github.com/>`_ repositories), you can do this (note: with
 the -r option, commands can be invoked from anywhere):
 
 
