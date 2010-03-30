@@ -313,8 +313,6 @@ command-line interface to GitHub's Issues API (v2)"""
     parser.add_option("-w", "--web", "--webbrowser", action="store_true", 
         dest="webbrowser", default=False, help="show issue(s) GitHub page "\
         "in web browser (only for list and show commands) [default: False]")
-    # Version number (optparse gives you --version but we have to do it
-    # ourselves to get -V too. sigh)
     parser.add_option("-V", "--version", action="store_true",
         dest="show_version", default=False,
         help="show program's version number and exit")
