@@ -33,24 +33,29 @@ def get_remote_info():
     commands = (
         "git config --get remote.origin.url",
         "git config --get remote.github.url",
-        "hg paths default"
+        "hg paths default",
+        "hg paths github"
     )
     for command in commands:
         stdout, stderr = Popen(command, shell=True, stdin=PIPE, stdout=PIPE, 
             stderr=PIPE).communicate()
-        if stderr:
-            for line in stderr.splitlines():
-                print line.lower()
-        elif stdout:
+        if stdout:
             line = stdout.strip()
             if not "github.com" in line:
-                raise Exception("repository needs to be hosted on github.com")
+                continue
             pattern = re.compile(r'([^:/]+)/([^/]+).git$')
             result = pattern.search(line)
             if result:
                 return result.groups()
             else:
                 raise Exception("invalid user and repo name")
+        elif stderr:
+            for line in stderr.splitlines():
+                line = line.lower()
+                # a bit hackish: hg paths <path> returns 'not found!' when
+                # <path> is not in .hg/hgrc; this is to avoid showing it
+                if not 'not found' in line: 
+                    print line
     raise Exception("not a valid repository or not hosted on github.com")
     
 def get_remote_info_from_option(repository):
