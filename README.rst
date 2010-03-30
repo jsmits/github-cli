@@ -112,3 +112,4 @@ the -r option, commands can be invoked from anywhere):
     -w, --web, --webbrowser
                           show issue(s) GitHub page in web browser (only for
                           list and show commands) [default: False]
+    -V, --version         show program's version number and exit
