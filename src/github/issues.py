@@ -12,6 +12,7 @@ except ImportError:
 
 from github.utils import urlopen2, get_remote_info, edit_text, \
     get_remote_info_from_option, get_prog, Pager, wrap_text
+from github.version import get_version
     
 def format_issue(issue, verbose=True):
     output = []
@@ -312,6 +313,9 @@ command-line interface to GitHub's Issues API (v2)"""
     parser.add_option("-w", "--web", "--webbrowser", action="store_true", 
         dest="webbrowser", default=False, help="show issue(s) GitHub page "\
         "in web browser (only for list and show commands) [default: False]")
+    parser.add_option("-V", "--version", action="store_true",
+        dest="show_version", default=False,
+        help="show program's version number and exit")
     
     class CustomValues: 
         pass
@@ -319,10 +323,14 @@ command-line interface to GitHub's Issues API (v2)"""
     
     kwargs = dict([(k, v) for k, v in options.__dict__.items() \
         if not k.startswith("__")])
+    if kwargs.get('show_version'):
+        print("ghi %s" % get_version('short'))
+        sys.exit(0)
+        
     if kwargs.get('state'):
         kwargs['state'] = {'o': 'open', 'c': 'closed', 'a': 'all'}.get(
             kwargs['state'], kwargs['state'])
-    
+            
     if args:
         cmd = args[0]
         try:

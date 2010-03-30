@@ -4,8 +4,8 @@ GitHub Issues API v2 - command-line interface
 
 about
 *****
-`github-cli <http://jsmits.github.com/github-cli/>`_ provides a 
-script called ``ghi``, that can be used to access all of `GitHub 
+`github-cli <http://jsmits.github.com/github-cli/>`_ provides an 
+executable called ``ghi``, that can be used to access all of `GitHub 
 <http://www.github.com/>`_'s documented `Issues API 
 <http://develop.github.com/p/issues.html>`_ (v2) functionality from your 
 command-line
@@ -58,8 +58,9 @@ you can find the username and API token on your GitHub's account page
 
 usage
 *****
-inside a git working directory with a remote repository that is hosted on
-GitHub (remote named either "origin" or "github"), you can do this (note: with
+from within a working directory with a remote that is hosted on
+GitHub (remote named either ``origin`` or ``github`` for git repositories or 
+``default`` or ``github`` for mercurial/`hg-git <http://hg-git.github.com/>`_ repositories), you can do this (note: with
 the -r option, commands can be invoked from anywhere):
 
 ::
@@ -112,3 +113,4 @@ the -r option, commands can be invoked from anywhere):
     -w, --web, --webbrowser
                           show issue(s) GitHub page in web browser (only for
                           list and show commands) [default: False]
+    -V, --version         show program's version number and exit

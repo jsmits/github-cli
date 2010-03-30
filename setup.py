@@ -1,7 +1,6 @@
 import os
+import sys
 from setuptools import setup, find_packages
-
-version = '0.2.6.1'
 
 description = "A command-line interface to the GitHub Issues API v2."
 cur_dir = os.path.dirname(__file__)
@@ -9,10 +8,13 @@ try:
     long_description = open(os.path.join(cur_dir, 'README.rst')).read()
 except:
     long_description = description
+    
+sys.path.insert(0, os.path.join(cur_dir, 'src')) # needed for importing github.version
+from github.version import get_version
 
 setup(
     name = "github-cli",
-    version = version,
+    version = get_version('short'),
     url = 'http://packages.python.org/github-cli',
     license = 'BSD',
     description = description,
@@ -33,6 +35,7 @@ setup(
         'Intended Audience :: System Administrators',
         'License :: OSI Approved :: BSD License',
         'Operating System :: MacOS :: MacOS X',
+        'Operating System :: Unix',
         'Operating System :: POSIX',
         'Programming Language :: Python',
         'Topic :: Software Development :: Bug Tracking',
