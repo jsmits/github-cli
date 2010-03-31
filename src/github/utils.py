@@ -163,4 +163,10 @@ def wrap_text(text, width=79):
             output.append(textwrap.fill(part, width))
         return "\n".join(output)
     return text
+    
+def get_underline(text, max_width=79):
+    if len(text) > max_width:
+        return "-" * max_width
+    else:
+        return "-" * len(text)
 

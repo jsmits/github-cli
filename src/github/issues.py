@@ -11,7 +11,7 @@ except ImportError:
     sys.exit(1)
 
 from github.utils import urlopen2, get_remote_info, edit_text, \
-    get_remote_info_from_option, get_prog, Pager, wrap_text
+    get_remote_info_from_option, get_prog, Pager, wrap_text, get_underline
 from github.version import get_version
     
 def format_issue(issue, verbose=True):
@@ -26,10 +26,8 @@ def format_issue(issue, verbose=True):
     if verbose:
         title = wrap_text(title)
         output.append(title)
-        if len(title) > 79:
-            output.append("-" * 79)
-        else:
-            output.append("-" * len(title))
+        underline = get_underline(title)
+        output.append(underline)
         if issue['body']:
             body = wrap_text(issue['body'])
             output.append(body)
@@ -41,6 +39,17 @@ def format_issue(issue, verbose=True):
         if updated and not updated == issue['created_at']:
             output.append("  updated: %s" % updated)
         output.append(" ")
+    return output
+
+def format_comment(comment, nr, total):
+    timestamp = comment.get("updated_at", comment["created_at"])
+    title = "comment %s of %s by %s (%s)" % (nr, total, comment["user"], 
+        timestamp)
+    output = [title]
+    underline = get_underline(title)
+    output.append(underline)
+    body = wrap_text(comment['body'])
+    output.append(body)
     return output
 
 def pprint_issue(issue, verbose=True):
@@ -174,7 +183,7 @@ class Commands(object):
                 printer.write() # new line between states
         printer.close()
         
-    def show(self, number=None, webbrowser=False, **kwargs):
+    def show(self, number=None, verbose=False, webbrowser=False, **kwargs):
         validate_number(number, example="%s show 1" % get_prog())
         if webbrowser:
             issue_url_template = "http://github.com/%s/%s/issues/%s/find"
@@ -185,8 +194,26 @@ class Commands(object):
                 print "error: opening page in web browser failed"
             else:
                 sys.exit(0)
+
         issue = self.__get_issue(number)
-        pprint_issue(issue)
+        if not verbose:
+            pprint_issue(issue)
+        else:
+            printer = Pager()
+            lines = format_issue(issue, verbose=True)
+            lines.insert(0, " ")
+            printer.write("\n".join(lines))
+            comments = self.__submit('comments', number)
+            comments = get_key(comments, 'comments')
+            if comments:
+                lines = [] # reset
+                total = len(comments)
+                for i in range(total):
+                    comment = comments[i]
+                    lines.extend(format_comment(comment, i+1, total))
+                    lines.append(" ")
+                printer.write("\n".join(lines))
+            printer.close()
         
     def open(self, **kwargs):
         post_data = create_edit_issue()
@@ -276,6 +303,7 @@ Examples:
 %prog [-s o|c] -w                     show issues' GitHub page in web browser 
                                     (default: open)
 %prog show <nr>                       show issue <nr>
+%prog show <nr> -v                    same as above, but with comments
 %prog <nr>                            same as: %prog show <nr>
 %prog <nr> -w                         show issue <nr>'s GitHub page in web 
                                     browser
@@ -300,8 +328,8 @@ command-line interface to GitHub's Issues API (v2)"""
     
     parser = OptionParser(usage=usage, description=description)
     parser.add_option("-v", "--verbose", action="store_true", dest="verbose", 
-      default=False, help="show issue details (only for list and search "\
-        "commands) [default: False]")
+      default=False, help="show issue details (only for show, list and "\
+        "search commands) [default: False]")
     parser.add_option("-s", "--state", action="store", dest="state", 
         type='choice', choices=['o', 'open', 'c', 'closed', 'a', 'all'], 
         default='open', help="specify state (only for list and search (except `all`) "\

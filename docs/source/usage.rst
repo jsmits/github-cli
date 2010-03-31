@@ -21,6 +21,7 @@ the -r option, commands can be invoked from anywhere):
   ghi [-s o|c] -w                     show issues' GitHub page in web browser 
                                       (default: open)
   ghi show <nr>                       show issue <nr>
+  ghi show <nr> -v                    same as above, but with comments
   ghi <nr>                            same as: ghi show <nr>
   ghi <nr> -w                         show issue <nr>'s GitHub page in web 
                                       browser
@@ -44,8 +45,8 @@ the -r option, commands can be invoked from anywhere):
 
   Options:
     -h, --help            show this help message and exit
-    -v, --verbose         show issue details (only for list and search commands)
-                          [default: False]
+    -v, --verbose         show issue details (only for show, list and search
+                          commands) [default: False]
     -s STATE, --state=STATE
                           specify state (only for list and search (except `all`)
                           commands) choices are: open (o), closed (c), all (a)
