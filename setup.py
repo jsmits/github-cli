@@ -8,8 +8,9 @@ try:
     long_description = open(os.path.join(cur_dir, 'README.rst')).read()
 except:
     long_description = description
-    
-sys.path.insert(0, os.path.join(cur_dir, 'src')) # needed for importing github.version
+
+# needed for importing github.version
+sys.path.insert(0, os.path.join(cur_dir, 'src'))
 from github.version import get_version
 
 setup(
@@ -42,4 +43,3 @@ setup(
     ],
     test_suite = 'nose.collector',
 )
-

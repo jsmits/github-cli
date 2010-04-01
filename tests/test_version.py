@@ -8,6 +8,7 @@ from nose.tools import eq_
 
 import github.version
 
+
 def test_get_version():
     get_version = github.version.get_version
     for tup, short, normal, verbose in [
@@ -23,4 +24,3 @@ def test_get_version():
         yield eq_, get_version('short'), short
         yield eq_, get_version('normal'), normal
         yield eq_, get_version('verbose'), verbose
-        

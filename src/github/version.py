@@ -10,6 +10,7 @@ Borrowed from `fabric`.
 
 VERSION = (0, 2, 7, 'final', 0)
 
+
 def get_version(form='short'):
     """
     Return a version string for this package, based on `VERSION`.
@@ -75,6 +76,6 @@ def get_version(form='short'):
     try:
         return versions[form]
     except KeyError:
-        raise TypeError, '"%s" is not a valid form specifier.' % form
+        raise TypeError('"%s" is not a valid form specifier.' % form)
 
 __version__ = get_version('short')

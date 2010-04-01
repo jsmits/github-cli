@@ -1,8 +1,8 @@
 import os
 import sys
 import urllib
-from optparse import OptionParser
 import webbrowser as browser
+from optparse import OptionParser
 
 try:
     import simplejson
@@ -13,7 +13,8 @@ except ImportError:
 from github.utils import urlopen2, get_remote_info, edit_text, \
     get_remote_info_from_option, get_prog, Pager, wrap_text, get_underline
 from github.version import get_version
-    
+
+
 def format_issue(issue, verbose=True):
     output = []
     if verbose:
@@ -41,9 +42,10 @@ def format_issue(issue, verbose=True):
         output.append(" ")
     return output
 
+
 def format_comment(comment, nr, total):
     timestamp = comment.get("updated_at", comment["created_at"])
-    title = "comment %s of %s by %s (%s)" % (nr, total, comment["user"], 
+    title = "comment %s of %s by %s (%s)" % (nr, total, comment["user"],
         timestamp)
     output = [title]
     underline = get_underline(title)
@@ -52,11 +54,13 @@ def format_comment(comment, nr, total):
     output.append(body)
     return output
 
+
 def pprint_issue(issue, verbose=True):
     lines = format_issue(issue, verbose)
     lines.insert(0, " ") # insert empty first line
     print "\n".join(lines)
-    
+
+
 def handle_error(result):
     output = []
     for msg in result['error']:
@@ -66,7 +70,8 @@ def handle_error(result):
             output.append("error: %s" % msg['error'])
     error_msg = "\n".join(output)
     raise Exception(error_msg)
-        
+
+
 def validate_number(number, example):
     msg = "number required\nexample: %s" % example
     if not number:
@@ -77,14 +82,16 @@ def validate_number(number, example):
         except:
             raise Exception(msg)
 
+
 def get_key(data, key):
     try:
         return data[key]
     except KeyError:
         raise Exception("unexpected failure")
-        
+
+
 def create_edit_issue(issue=None):
-    main_text = """# Please explain the issue. 
+    main_text = """# Please explain the issue.
 # The first line will be used as the title.
 # Lines starting with `#` will be ignored."""
     if issue:
@@ -108,6 +115,7 @@ def create_edit_issue(issue=None):
     body = "\n".join(lines[1:]).strip()
     return {'title': title, 'body': body}
 
+
 def create_comment(issue):
     inp = """
 # Please enter a comment.
@@ -124,13 +132,15 @@ def create_comment(issue):
     lines = out.splitlines()
     comment = "\n".join(lines).strip()
     return comment
-    
+
+
 class Commands(object):
+
     def __init__(self, user, repo):
         self.user = user
         self.repo = repo
         self.url_template = "http://github.com/api/v2/json/issues/%s/%s/%s"
-        
+
     def search(self, search_term=None, state='open', verbose=False, **kwargs):
         if not search_term:
             example = "%s search experimental" % get_prog()
@@ -141,19 +151,21 @@ class Commands(object):
         search_term_quoted = search_term_quoted.replace(".", "%2E")
         result = self.__submit('search', search_term, state)
         issues = get_key(result, 'issues')
-        header = "# searching for '%s' returned %s issues" % (search_term, len(issues))
+        header = "# searching for '%s' returned %s issues" % (search_term,
+            len(issues))
         printer = Pager()
         printer.write(header)
         for issue in issues:
             lines = format_issue(issue, verbose)
             printer.write("\n".join(lines))
         printer.close()
-        
+
     def list(self, state='open', verbose=False, webbrowser=False, **kwargs):
         if webbrowser:
             issues_url_template = "http://github.com/%s/%s/issues/%s"
             if state == "closed":
-                issues_url = issues_url_template % (self.user, self.repo, state)
+                issues_url = issues_url_template % (self.user, self.repo,
+                    state)
             else:
                 issues_url = issues_url_template % (self.user, self.repo, "")
             try:
@@ -162,7 +174,7 @@ class Commands(object):
                 print "error: opening page in web browser failed"
             else:
                 sys.exit(0)
-            
+
         if state == 'all':
             states = ['open', 'closed']
         else:
@@ -182,7 +194,7 @@ class Commands(object):
             if not st == states[-1]:
                 printer.write() # new line between states
         printer.close()
-        
+
     def show(self, number=None, verbose=False, webbrowser=False, **kwargs):
         validate_number(number, example="%s show 1" % get_prog())
         if webbrowser:
@@ -214,25 +226,25 @@ class Commands(object):
                     lines.append(" ")
                 printer.write("\n".join(lines))
             printer.close()
-        
+
     def open(self, **kwargs):
         post_data = create_edit_issue()
         result = self.__submit('open', data=post_data)
         issue = get_key(result, 'issue')
         pprint_issue(issue)
-        
+
     def close(self, number=None, **kwargs):
         validate_number(number, example="%s close 1" % get_prog())
         result = self.__submit('close', number)
         issue = get_key(result, 'issue')
         pprint_issue(issue)
-        
+
     def reopen(self, number=None, **kwargs):
         validate_number(number, example="%s open 1" % get_prog())
         result = self.__submit('reopen', number)
         issue = get_key(result, 'issue')
         pprint_issue(issue)
-        
+
     def edit(self, number=None, **kwargs):
         validate_number(number, example="%s edit 1" % get_prog())
         gh_issue = self.__get_issue(number)
@@ -245,9 +257,9 @@ class Commands(object):
         result = self.__submit('edit', number, data=post_data)
         issue = get_key(result, 'issue')
         pprint_issue(issue)
-        
+
     def label(self, command, label, number=None, **kwargs):
-        validate_number(number, example="%s label %s %s 1" % (get_prog(), 
+        validate_number(number, example="%s label %s %s 1" % (get_prog(),
             command, label))
         if command not in ['add', 'remove']:
             msg = "label command should use either 'add' or 'remove'\n"\
@@ -263,7 +275,7 @@ class Commands(object):
                 print "- %s" % label
         else:
             print "no labels found for issue #%s" % number
-        
+
     def comment(self, number=None, **kwargs):
         validate_number(number, example="%s comment 1" % get_prog())
         gh_issue = self.__get_issue(number)
@@ -273,11 +285,11 @@ class Commands(object):
         returned_comment = get_key(result, 'comment')
         if returned_comment:
             print "comment for issue #%s submitted successfully" % number
-        
+
     def __get_issue(self, number):
         result = self.__submit('show', number)
         return get_key(result, 'issue')
-        
+
     def __submit(self, action, *args, **kwargs):
         base_url = self.url_template % (action, self.user, self.repo)
         args_list = list(args)
@@ -290,22 +302,23 @@ class Commands(object):
             handle_error(result)
         else:
             return result
-        
+
+
 def main():
     usage = """usage: %prog command [args] [options]
 
 Examples:
-%prog list [-s open|closed|all]       show open, closed or all issues 
+%prog list [-s open|closed|all]       show open, closed or all issues
                                     (default: open)
 %prog [-s o|c|a] -v                   same as above, but with issue details
 %prog                                 same as: %prog list
 %prog -v                              same as: %prog list -v
-%prog [-s o|c] -w                     show issues' GitHub page in web browser 
+%prog [-s o|c] -w                     show issues' GitHub page in web browser
                                     (default: open)
 %prog show <nr>                       show issue <nr>
 %prog show <nr> -v                    same as above, but with comments
 %prog <nr>                            same as: %prog show <nr>
-%prog <nr> -w                         show issue <nr>'s GitHub page in web 
+%prog <nr> -w                         show issue <nr>'s GitHub page in web
                                     browser
 %prog open (o)                        create a new issue (with $EDITOR)
 %prog close (c) <nr>                  close issue <nr>
@@ -316,67 +329,68 @@ Examples:
 %prog search (s) <term>               search for <term> (default: open)
 %prog s <term> [-s o|c] -v            same as above, but with details
 %prog s <term> -s closed              only search in closed issues
-%prog comment (m) <nr>                create a comment for issue <nr> 
+%prog comment (m) <nr>                create a comment for issue <nr>
                                     (with $EDITOR)
-%prog -r <user>/<repo>                specify a repository (can be used for 
+%prog -r <user>/<repo>                specify a repository (can be used for
                                     all commands)
-%prog -r <repo>                       specify a repository (gets user from 
+%prog -r <repo>                       specify a repository (gets user from
                                     global git config)"""
-    
+
     description = """Description:
 command-line interface to GitHub's Issues API (v2)"""
-    
+
     parser = OptionParser(usage=usage, description=description)
-    parser.add_option("-v", "--verbose", action="store_true", dest="verbose", 
+    parser.add_option("-v", "--verbose", action="store_true", dest="verbose",
       default=False, help="show issue details (only for show, list and "\
         "search commands) [default: False]")
-    parser.add_option("-s", "--state", action="store", dest="state", 
-        type='choice', choices=['o', 'open', 'c', 'closed', 'a', 'all'], 
-        default='open', help="specify state (only for list and search (except `all`) "\
-        "commands) choices are: open (o), closed (c), all (a) [default: open]")
-    parser.add_option("-r", "--repo", "--repository", action="store", 
+    parser.add_option("-s", "--state", action="store", dest="state",
+        type='choice', choices=['o', 'open', 'c', 'closed', 'a', 'all'],
+        default='open', help="specify state (only for list and search "\
+        "(except `all`) commands) choices are: open (o), closed (c), all "\
+        "(a) [default: open]")
+    parser.add_option("-r", "--repo", "--repository", action="store",
         dest="repo", help="specify a repository (format: "\
             "`user/repo` or just `repo` (latter will get the user from the "\
             "global git config))")
-    parser.add_option("-w", "--web", "--webbrowser", action="store_true", 
+    parser.add_option("-w", "--web", "--webbrowser", action="store_true",
         dest="webbrowser", default=False, help="show issue(s) GitHub page "\
         "in web browser (only for list and show commands) [default: False]")
     parser.add_option("-V", "--version", action="store_true",
         dest="show_version", default=False,
         help="show program's version number and exit")
-    
-    class CustomValues: 
+
+    class CustomValues:
         pass
     (options, args) = parser.parse_args(values=CustomValues)
-    
+
     kwargs = dict([(k, v) for k, v in options.__dict__.items() \
         if not k.startswith("__")])
     if kwargs.get('show_version'):
         print("ghi %s" % get_version('short'))
         sys.exit(0)
-        
+
     if kwargs.get('state'):
         kwargs['state'] = {'o': 'open', 'c': 'closed', 'a': 'all'}.get(
             kwargs['state'], kwargs['state'])
-            
+
     if args:
         cmd = args[0]
         try:
             nr = str(int(cmd))
             if cmd == nr:
                 cmd = 'show'
-                args = (cmd, nr) 
-        except: 
+                args = (cmd, nr)
+        except:
             pass
     else:
         cmd = 'list' # default command
-        
+
     if cmd == 'search':
         search_term = " ".join(args[1:])
         args = (args[0], search_term)
-    
-    # handle command aliases    
-    cmd = {'o': 'open', 'c': 'close', 'e': 'edit', 'm': 'comment', 
+
+    # handle command aliases
+    cmd = {'o': 'open', 'c': 'close', 'e': 'edit', 'm': 'comment',
         's': 'search'}.get(cmd, cmd)
     if cmd == 'open' and len(args) > 1:
         cmd = 'reopen'
@@ -386,12 +400,12 @@ command-line interface to GitHub's Issues API (v2)"""
         args_list = [cmd, {'a': 'add', 'r': 'remove'}[alias[0]]]
         args_list.extend(args[1:])
         args = tuple(args_list)
-    
+
     try:
         repository = kwargs.get('repo')
         if repository:
             user, repo = get_remote_info_from_option(repository)
-        else:    
+        else:
             user, repo = get_remote_info()
         commands = Commands(user, repo)
         getattr(commands, cmd)(*args[1:], **kwargs)
