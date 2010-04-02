@@ -39,6 +39,7 @@ def format_issue(issue, verbose=True):
         updated = issue.get('updated_at')
         if updated and not updated == issue['created_at']:
             output.append("  updated: %s" % updated)
+        output.append(" comments: %s" % issue.get('comments', 0))
         output.append(" ")
     return output
 
@@ -215,9 +216,9 @@ class Commands(object):
             lines = format_issue(issue, verbose=True)
             lines.insert(0, " ")
             printer.write("\n".join(lines))
-            comments = self.__submit('comments', number)
-            comments = get_key(comments, 'comments')
-            if comments:
+            if issue.get("comments", 0) > 0:
+                comments = self.__submit('comments', number)
+                comments = get_key(comments, 'comments')
                 lines = [] # reset
                 total = len(comments)
                 for i in range(total):
