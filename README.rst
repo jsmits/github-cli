@@ -4,7 +4,7 @@ GitHub Issues API v2 - command-line interface
 
 about
 *****
-`github-cli <http://jsmits.github.com/github-cli/>`_ provides an 
+`github-cli <http://packages.python.org/github-cli/>`_ provides an 
 executable called ``ghi``, that can be used to access all of `GitHub 
 <http://www.github.com/>`_'s documented `Issues API 
 <http://develop.github.com/p/issues.html>`_ (v2) functionality from your 
