@@ -1,0 +1,73 @@
+.TH GHI 1 "April 13, 2010"
+.SH NAME
+ghi \- command-line interface to the GitHub Issues API
+.SH SYNOPSIS
+.B ghi
+command
+.RI [ arguments ]
+.RI [ options ]
+.SH DESCRIPTION
+This manual page documents briefly the \fBghi\fR command.
+.PP
+\fBghi\fP is a command-line interface to the GitHub Issues API. It can
+be used to access all of GitHub's documented Issues API (v2) functionality
+from the command line: open, close and manipulate issues.
+.br
+If no command is given, the default action is \fIlist\fR. If a number is given
+instead, the default action is \fIshow\fR.
+.SH COMMANDS
+.TP
+\fBlist\fR [ \fB-s\fR \fIopen\fR|\fIclosed\fR|\fIall\fR ]
+Show open, closed or all issues (choose with \fB\-s\fR, see below). Default is
+\fIopen\fR.
+.TP
+.BI show " number"
+Show issue \fInumber\fR. This command can be invoked also as \fBghi <number>\fR.
+.TP
+\fBopen\fR [ \fInumber\fR ], \fBo\fR [ \fInumber\fR ]
+Create a new issue, and launch \fB$EDITOR\fR. If \fInumber\fR is given, reopens
+that issue.
+.TP
+\fBclose\fR \fInumber\fR, \fBc\fR \fInumber\fR
+Closes issue \fInumber\fR.
+.TP
+\fBedit\fR \fInumber\fR, \fBe\fR \fInumber\fR
+Edit issue \fInumber\fR with \fB$EDITOR\fR.
+.TP
+\fBlabel\fR \fBadd\fR|\fBremove\fR \fIlabel\fR \fInumber\fR
+Add or remove \fIlabel\fR to/from issue \fInumber\fR.
+.br
+You can use \fBal\fR or \fBrl\fR instead of, respectively, \fBlabel add\fR and
+\fBlabel remove\fR.
+.TP
+\fBsearch\fR \fIterm\fR, \fBs\fR \fIterm\fR
+Search for \fIterm\fR.
+.TP
+\fBcomment\fR \fInumber\fR, \fBm\fR \fInumber\fR
+Create a comment for issue \fInumber\fR (with \fB$EDITOR\fR).
+.SH OPTIONS
+.TP
+.B \-h, \-\-help
+Show summary of options.
+.TP
+.B \-v, \-\-verbose
+Show issue details (only for show, list and search commands). Default is \fBfalse\fR.
+.TP
+.B \-V, \-\-version
+Show program's version number and exit.
+.TP
+\fB\-s\fR \fISTATE\fR, \fB\-\-state=\fISTATE\fR
+Specify state (only for list and search (except "all") commands). Choices are: \fIopen\fR
+(\fIo\fR), \fIclosed\fR (\fIc\fR), \fIall\fR (\fIa\fR). Default is \fIopen\fR.
+.TP
+\fB-r\fR \fIREPO\fR, \fB--repo=\fIREPO\fR, \fB--repository=\fIREPO\fR
+Specify a repository. The format: "\fIuser/repo\fR" or just "\fIrepo\fR" (latter will get the
+user from the global git config).
+.TP
+.B \-w, \-\-web, \-\-webbrowser
+Show issue(s) GitHub page in web browser (only for list and show commands). Default is \fIfalse\fR.
+.SH AUTHOR
+github-cli was written by Sander Smits <jhmsmits@gmail.com>.
+.PP
+This manual page was written by David Paleino <dapal@debian.org>,
+for the Debian project (and may be used by others).
