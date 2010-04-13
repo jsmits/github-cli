@@ -37,13 +37,20 @@ def get_remote_info():
         "git config --get remote.github.url",
         "hg paths default",
         "hg paths github")
+    aliases = get_aliases()
     for command in commands:
         stdout, stderr = Popen(command, shell=True, stdin=PIPE, stdout=PIPE,
             stderr=PIPE).communicate()
         if stdout:
             line = stdout.strip()
             if not "github.com" in line:
-                continue
+                # check if it's using an alias
+                for alias in aliases:
+                    if line.startswith(alias):
+                        line = line.replace(alias, aliases[alias])
+                        break
+                else:
+                    continue
             pattern = re.compile(r'([^:/]+)/([^/]+).git$')
             result = pattern.search(line)
             if result:
@@ -58,6 +65,26 @@ def get_remote_info():
                 if not 'not found' in line:
                     print line
     raise Exception("not a valid repository or not hosted on github.com")
+
+
+def get_aliases():
+    """
+    Return a dict of global git aliases regarding github, or None:
+        {
+         "alias": "http://...",
+         "alias2": "git://...it",
+        }
+    """
+    cmd = "git config --global --get-regexp url\..*github.com.*"
+    stdout, stderr = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE,
+        stderr=PIPE).communicate()
+    if stdout:
+        d = {}
+        for alias in stdout.strip().split('\n'):
+            url, alias = alias.split()
+            d[alias] = url.split('.', 1)[1].rsplit('.', 1)[0]
+        return d
+    return None
 
 
 def get_remote_info_from_option(repository):
