@@ -35,7 +35,7 @@ test_input = (
 
     # show commands
     ('show 1', None), ('1', None), ('17288182', "error: server problem (HTTP"\
-        " Error 403: Forbidden)"),
+        " Error 403: Forbidden)"), ('5', None), ('5 -v', None),
 
     # state modification commands
     ('close 1', None), ('open 1', None), ('c 1', None), ('close 1', None),

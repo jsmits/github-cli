@@ -15,6 +15,13 @@ from github.utils import urlopen2, get_remote_info, edit_text, \
 from github.version import get_version
 
 
+def smart_unicode(text):
+    try:
+        return str(text)
+    except UnicodeEncodeError:
+        return text.encode('utf-8')
+
+
 def format_issue(issue, verbose=True):
     output = []
     if verbose:
@@ -22,6 +29,7 @@ def format_issue(issue, verbose=True):
     else:
         indent = " " * (5 - len(str(issue['number'])))
     title = "%s%s. %s" % (indent, issue['number'], issue['title'])
+    title = smart_unicode(title)
     if not verbose:
         output.append(title[:80])
     if verbose:
@@ -30,7 +38,7 @@ def format_issue(issue, verbose=True):
         underline = get_underline(title)
         output.append(underline)
         if issue['body']:
-            body = wrap_text(issue['body'])
+            body = smart_unicode(wrap_text(issue['body']))
             output.append(body)
         output.append("    state: %s" % issue['state'])
         output.append("     user: %s" % issue['user'])
