@@ -56,10 +56,11 @@ def format_comment(comment, nr, total):
     timestamp = comment.get("updated_at", comment["created_at"])
     title = "comment %s of %s by %s (%s)" % (nr, total, comment["user"],
         timestamp)
+    title = smart_unicode(title)
     output = [title]
     underline = get_underline(title)
     output.append(underline)
-    body = wrap_text(comment['body'])
+    body = smart_unicode(wrap_text(comment['body']))
     output.append(body)
     return output
 
