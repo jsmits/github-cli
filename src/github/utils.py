@@ -84,7 +84,7 @@ def get_aliases():
             url, alias = alias.split()
             d[alias] = url.split('.', 1)[1].rsplit('.', 1)[0]
         return d
-    return None
+    return []
 
 
 def get_remote_info_from_option(repository):
