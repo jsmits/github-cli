@@ -100,7 +100,7 @@ def get_key(data, key):
         raise Exception("unexpected failure")
 
 
-def create_edit_issue(issue=None):
+def create_edit_issue(issue=None, text = None):
     main_text = """# Please explain the issue.
 # The first line will be used as the title.
 # Lines starting with `#` will be ignored."""
@@ -117,7 +117,8 @@ def create_edit_issue(issue=None):
 #   created:  %(created_at)s""" % issue
     else:
         template = "\n%s" % main_text
-    text = edit_text(template)
+    if not text:
+        text = edit_text(template)
     if not text:
         raise Exception("can not submit an empty issue")
     lines = text.splitlines()
@@ -237,8 +238,11 @@ class Commands(object):
                 printer.write("\n".join(lines))
             printer.close()
 
-    def open(self, **kwargs):
-        post_data = create_edit_issue()
+    def open(self, message=None, **kwargs):
+        if message == None:
+            post_data = create_edit_issue()
+        else:
+            post_data = create_edit_issue(text = message)
         result = self.__submit('open', data=post_data)
         issue = get_key(result, 'issue')
         pprint_issue(issue)
@@ -331,6 +335,7 @@ Examples:
 %prog <nr> -w                         show issue <nr>'s GitHub page in web
                                     browser
 %prog open (o)                        create a new issue (with $EDITOR)
+%prog open (o) -m <msg>               create a new issue with <msg> content
 %prog close (c) <nr>                  close issue <nr>
 %prog open (o) <nr>                   reopen issue <nr>
 %prog edit (e) <nr>                   edit issue <nr> (with $EDITOR)
@@ -368,6 +373,8 @@ command-line interface to GitHub's Issues API (v2)"""
     parser.add_option("-V", "--version", action="store_true",
         dest="show_version", default=False,
         help="show program's version number and exit")
+    parser.add_option("-m", "--message", action="store", dest="message",
+      default=None, help="message content")
 
     class CustomValues:
         pass

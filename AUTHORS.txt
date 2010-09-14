@@ -2,3 +2,4 @@ Sander Smits
 Mark Norman Francis
 Frederik Dohr
 David Paleino
+Jonathan Wight
