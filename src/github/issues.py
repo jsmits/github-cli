@@ -5,13 +5,10 @@ import webbrowser as browser
 from optparse import OptionParser
 
 try:
-    import json
+    import simplejson
 except ImportError:
-    try:
-        import simplejson as json
-    except ImportError:
-        print "error: simplejson required"
-        sys.exit(1)
+    print "error: simplejson required"
+    sys.exit(1)
 
 from github.utils import urlopen2, get_remote_info, edit_text, \
     get_remote_info_from_option, get_prog, Pager, wrap_text, get_underline
@@ -313,7 +310,7 @@ class Commands(object):
         args_list.insert(0, base_url)
         url = "/".join(args_list)
         page = urlopen2(url, **kwargs)
-        result = json.load(page)
+        result = simplejson.load(page)
         page.close()
         if result.get('error'):
             handle_error(result)
