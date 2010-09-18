@@ -8,7 +8,7 @@ which in turn needs access to this version information.)
 Borrowed from `fabric`.
 """
 
-VERSION = (0, 2, 9, 'final', 0)
+VERSION = (0, 3, 0, 'final', 0)
 
 
 def get_version(form='short'):
