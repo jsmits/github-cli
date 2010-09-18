@@ -13,6 +13,11 @@ except:
 sys.path.insert(0, os.path.join(cur_dir, 'src'))
 from github.version import get_version
 
+pkg_requires = ['setuptools', ]
+# simplejson is included in since Python 2.6 as json.
+if sys.version_info[0] < 3 and sys.version_info[1] < 6:
+    pkg_requires.append('simplejson')
+
 setup(
     name = "github-cli",
     version = get_version('short'),
@@ -24,7 +29,7 @@ setup(
     author_email = 'jhmsmits@gmail.com',
     packages = find_packages('src'),
     package_dir = {'': 'src'},
-    install_requires = ['setuptools', 'simplejson'],
+    install_requires = pkg_requires,
     entry_points="""
     [console_scripts]
     ghi = github.issues:main
