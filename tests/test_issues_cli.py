@@ -35,7 +35,7 @@ test_input = (
 
     # show commands
     ('show 1', None), ('1', None), ('17288182', "error: server problem (HTTP"\
-        " Error 403: Forbidden)"), ('5', None), ('5 -v', None),
+        " Error 404: Not Found)"), ('5', None), ('5 -v', None),
 
     # state modification commands
     ('close 1', None), ('open 1', None), ('c 1', None), ('close 1', None),
@@ -57,4 +57,5 @@ test_input = (
     ('search test', None), ('s test', None), ('search test -s open', None),
     ('search test -s o', None), ('search test -s closed', None),
     ('search test -s c', None), ('s test -s c', None), ('search', SystemExit),
+    
 )
