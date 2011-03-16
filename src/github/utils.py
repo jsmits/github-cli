@@ -189,8 +189,8 @@ class Pager(object):
             try:
                 self.proc.wait()
             except KeyboardInterrupt:
-	    	sys.proc.kill()
-		sys.exit(1)
+                sys.proc.kill()
+                sys.exit(1)
 
 
 
