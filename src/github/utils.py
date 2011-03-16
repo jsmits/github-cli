@@ -125,7 +125,8 @@ def get_config():
             print "    git config --global github.%s <your GitHub %s>" % (key,
                 help_name)
             print
-            print "or by specifying env vars GITHUB_USER and GITHUB_TOKEN"
+            print "or by specifying environment variables GITHUB_USER and "\
+				"GITHUB_TOKEN"
             sys.exit(1)
     return config
 

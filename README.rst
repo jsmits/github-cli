@@ -54,6 +54,8 @@ make sure your GitHub username and API token are added to the global git config:
   git config --global github.user <your GitHub username>
   git config --global github.token <your GitHub API token>
 
+or you can specify the environment variables GITHUB_USER and GITHUB_TOKEN
+
 you can find the username and API token on your GitHub's account page
 
 usage
