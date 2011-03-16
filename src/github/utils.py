@@ -97,18 +97,23 @@ def get_remote_info_from_option(repository):
 
 
 def get_config():
-    required_keys = ["user", "token"]
+    required_keys = {
+        'user': 'GITHUB_USER',
+        'token': 'GITHUB_TOKEN'
+    }
     config = {}
-    for key in required_keys:
-        command = "git config --global github.%s" % key
-        stdout, stderr = Popen(command, shell=True, stdin=PIPE, stdout=PIPE,
-            stderr=PIPE).communicate()
-        if stderr:
-            for line in stderr.splitlines():
-                print line
-            sys.exit(1)
-        if stdout:
+    for key, env_key in required_keys.items():
+        value = os.environ.get(env_key)
+        if not value:
+            command = "git config --global github.%s" % key
+            stdout, stderr = Popen(command, shell=True, stdin=PIPE, stdout=PIPE,
+                stderr=PIPE).communicate()
+            if stderr:
+                for line in stderr.splitlines():
+                    print line
+                sys.exit(1)
             value = stdout.strip()
+        if value:
             config[key] = value
         else:
             alt_help_names = {'user': 'username'}
@@ -117,8 +122,10 @@ def get_config():
                 "git config" % key
             print "please add it to the global git config by doing this:"
             print
-            print "git config --global github.%s <your GitHub %s>" % (key,
+            print "    git config --global github.%s <your GitHub %s>" % (key,
                 help_name)
+            print
+            print "or by specifying env vars GITHUB_USER and GITHUB_TOKEN"
             sys.exit(1)
     return config
 
