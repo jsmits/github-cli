@@ -189,8 +189,9 @@ class Pager(object):
             try:
                 self.proc.wait()
             except KeyboardInterrupt:
-                # TODO: should kill the self.proc here gracefully
-                sys.exit(0) # close silently no matter what
+	    	sys.proc.kill()
+		sys.exit(1)
+
 
 
 def wrap_text(text, width=79):
