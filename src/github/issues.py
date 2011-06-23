@@ -153,7 +153,7 @@ class Commands(object):
     def __init__(self, user, repo):
         self.user = user
         self.repo = repo
-        self.url_template = "http://github.com/api/v2/json/issues/%s/%s/%s"
+        self.url_template = "https://github.com/api/v2/json/issues/%s/%s/%s"
 
     def search(self, search_term=None, state='open', verbose=False, **kwargs):
         if not search_term:
@@ -176,7 +176,7 @@ class Commands(object):
 
     def list(self, state='open', verbose=False, webbrowser=False, **kwargs):
         if webbrowser:
-            issues_url_template = "http://github.com/%s/%s/issues/%s"
+            issues_url_template = "https://github.com/%s/%s/issues/%s"
             if state == "closed":
                 issues_url = issues_url_template % (self.user, self.repo,
                     state)
@@ -212,7 +212,7 @@ class Commands(object):
     def show(self, number=None, verbose=False, webbrowser=False, **kwargs):
         validate_number(number, example="%s show 1" % get_prog())
         if webbrowser:
-            issue_url_template = "http://github.com/%s/%s/issues/%s/find"
+            issue_url_template = "https://github.com/%s/%s/issues/%s"
             issue_url = issue_url_template % (self.user, self.repo, number)
             try:
                 browser.open(issue_url)
