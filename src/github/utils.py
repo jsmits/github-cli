@@ -56,6 +56,13 @@ def get_remote_info():
             if result:
                 return result.groups()
             else:
+                # Whilst repos are usually configured with a postfix of ".git"
+                # this is by convention only. Github happily handles requests
+                # without the postfix.
+                pattern = re.compile(r'([^:/]+)/([^/]+)')
+                result = pattern.search(line)
+                if result:
+                    return result.groups()
                 raise Exception("invalid user and repo name")
         elif stderr:
             for line in stderr.splitlines():
