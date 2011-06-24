@@ -130,7 +130,7 @@ def create_edit_issue(issue=None, text=None):
     return {'title': title, 'body': body}
 
 
-def create_comment(issue):
+def create_comment(issue=None, text=None):
     inp = """
 # Please enter a comment.
 # Lines starting with `#` will be ignored.
@@ -140,7 +140,11 @@ def create_comment(issue):
 #     votes:  %(votes)s
 #     state:  %(state)s
 #   created:  %(created_at)s""" % issue
-    out = edit_text(inp)
+    if text:
+        # \n on the command-line becomes \\n; undoing this:
+        out = text.replace("\\n", "\n")
+    else:
+        out = edit_text(inp)
     if not out:
         raise Exception("can not submit an empty comment")
     lines = out.splitlines()
@@ -290,10 +294,10 @@ class Commands(object):
         else:
             print "no labels found for issue #%s" % number
 
-    def comment(self, number=None, **kwargs):
+    def comment(self, number=None, message=None, **kwargs):
         validate_number(number, example="%s comment 1" % get_prog())
         gh_issue = self.__get_issue(number)
-        comment = create_comment(gh_issue)
+        comment = create_comment(issue=gh_issue, text=message)
         post_data = {'comment': comment}
         result = self.__submit('comment', number, data=post_data)
         returned_comment = get_key(result, 'comment')
@@ -348,6 +352,9 @@ Examples:
 %prog s <term> -s closed              only search in closed issues
 %prog comment (m) <nr>                create a comment for issue <nr>
                                     (with $EDITOR)
+%prog comment (m) <nr> -m <msg>       create a comment for issue <nr>
+                                    with <msg> content. (optionally use \\n
+                                    for new lines)
 %prog -r <user>/<repo>                specify a repository (can be used for
                                     all commands)
 %prog -r <repo>                       specify a repository (gets user from
@@ -366,8 +373,8 @@ command-line interface to GitHub's Issues API (v2)"""
         "(except `all`) commands) choices are: open (o), closed (c), all "\
         "(a) [default: open]")
     parser.add_option("-m", "--message", action="store", dest="message",
-      default=None, help="message content for opening an issue without "\
-        "using the editor")
+      default=None, help="message content for opening or commenting on an "\
+        "issue without using the editor")
     parser.add_option("-r", "--repo", "--repository", action="store",
         dest="repo", help="specify a repository (format: "\
             "`user/repo` or just `repo` (latter will get the user from the "\
