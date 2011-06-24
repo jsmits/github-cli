@@ -69,7 +69,7 @@ the -r option, commands can be invoked from anywhere):
 
   (github-cli)[jsmits@imac:~]$ ghi --help
   Usage: ghi command [args] [options]
-
+  
   Examples:
   ghi list [-s open|closed|all]       show open, closed or all issues
                                       (default: open)
@@ -97,13 +97,16 @@ the -r option, commands can be invoked from anywhere):
   ghi s <term> -s closed              only search in closed issues
   ghi comment (m) <nr>                create a comment for issue <nr>
                                       (with $EDITOR)
+  ghi comment (m) <nr> -m <msg>       create a comment for issue <nr>
+                                      with <msg> content. (optionally use \n
+                                      for new lines)
   ghi -r <user>/<repo>                specify a repository (can be used for
                                       all commands)
   ghi -r <repo>                       specify a repository (gets user from
                                       global git config)
-
+  
   Description: command-line interface to GitHub's Issues API (v2)
-
+  
   Options:
     -h, --help            show this help message and exit
     -v, --verbose         show issue details (only for show, list and search
@@ -113,8 +116,8 @@ the -r option, commands can be invoked from anywhere):
                           commands) choices are: open (o), closed (c), all (a)
                           [default: open]
     -m MESSAGE, --message=MESSAGE
-                          message content for opening an issue without using the
-                          editor
+                          message content for opening or commenting on an issue
+                          without using the editor
     -r REPO, --repo=REPO, --repository=REPO
                           specify a repository (format: `user/repo` or just
                           `repo` (latter will get the user from the global git
@@ -123,3 +126,4 @@ the -r option, commands can be invoked from anywhere):
                           show issue(s) GitHub page in web browser (only for
                           list and show commands) [default: False]
     -V, --version         show program's version number and exit
+  
