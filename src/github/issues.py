@@ -334,7 +334,7 @@ Examples:
 %prog -v                              same as: %prog list -v
 %prog [-s o|c] -w                     show issues' GitHub page in web browser
                                     (default: open)
-%prog list -u <github_user>         show issues created by specified user
+%prog list -u <github_user>           show issues created by specified user
 
 %prog show <nr>                       show issue <nr>
 %prog show <nr> -v                    same as above, but with comments
