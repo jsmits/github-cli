@@ -16,7 +16,7 @@ from github.version import get_version
 setup(
     name = "github-cli",
     version = get_version('short'),
-    url = 'http://packages.python.org/github-cli',
+    url = 'http://github-cli.readthedocs.org/',
     license = 'BSD',
     description = description,
     long_description = long_description,
@@ -30,7 +30,7 @@ setup(
     ghi = github.issues:main
     """,
     classifiers=[
-        'Development Status :: 4 - Beta',
+        'Development Status :: 5 - Production/Stable',
         'Environment :: Console',
         'Intended Audience :: Developers',
         'Intended Audience :: System Administrators',
