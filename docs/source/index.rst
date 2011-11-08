@@ -10,7 +10,7 @@ GitHub Issues (v2) - CLI
 About
 =====
 
-Installing `github-cli <http://packages.python.org/github-cli/>`_ will provide an 
+Installing `github-cli <http://github-cli.readthedocs.org/>`_ will provide an 
 executable called ``ghi``, that can be used to access all of `GitHub 
 <https://github.com/>`_'s documented `Issues API 
 <http://develop.github.com/p/issues.html>`_ (v2) functionality from your 
