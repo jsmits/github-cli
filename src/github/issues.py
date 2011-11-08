@@ -178,7 +178,7 @@ class Commands(object):
             printer.write("\n".join(lines))
         printer.close()
 
-    def list(self, state='open', verbose=False, webbrowser=False, **kwargs):
+    def list(self, state='open', verbose=False, webbrowser=False, created_by=False, **kwargs):
         if webbrowser:
             issues_url_template = "https://github.com/%s/%s/issues/%s"
             if state == "closed":
@@ -205,8 +205,9 @@ class Commands(object):
             issues = get_key(result, 'issues')
             if issues:
                 for issue in issues:
-                    lines = format_issue(issue, verbose)
-                    printer.write("\n".join(lines))
+                    if created_by == False or created_by == issue.get('user'):
+                        lines = format_issue(issue, verbose)
+                        printer.write("\n".join(lines))
             else:
                 printer.write("no %s issues available" % st)
             if not st == states[-1]:
@@ -333,6 +334,8 @@ Examples:
 %prog -v                              same as: %prog list -v
 %prog [-s o|c] -w                     show issues' GitHub page in web browser
                                     (default: open)
+%prog list -u <github_user>         show issues created by specified user
+
 %prog show <nr>                       show issue <nr>
 %prog show <nr> -v                    same as above, but with comments
 %prog <nr>                            same as: %prog show <nr>
@@ -372,6 +375,8 @@ command-line interface to GitHub's Issues API (v2)"""
         default='open', help="specify state (only for list and search "\
         "(except `all`) commands) choices are: open (o), closed (c), all "\
         "(a) [default: open]")
+    parser.add_option("-u", "--user", action="store", dest="created_by", default=False,\
+        help="issues created by <github_username> [default: all]")
     parser.add_option("-m", "--message", action="store", dest="message",
       default=None, help="message content for opening or commenting on an "\
         "issue without using the editor")
