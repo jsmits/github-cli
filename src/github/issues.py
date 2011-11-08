@@ -178,7 +178,8 @@ class Commands(object):
             printer.write("\n".join(lines))
         printer.close()
 
-    def list(self, state='open', verbose=False, webbrowser=False, created_by=False, **kwargs):
+    def list(self, state='open', verbose=False, webbrowser=False, 
+            created_by=False, **kwargs):
         if webbrowser:
             issues_url_template = "https://github.com/%s/%s/issues/%s"
             if state == "closed":
