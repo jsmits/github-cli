@@ -7,7 +7,6 @@ from github.issues import main
 repo = 'jsmits/github-cli-public-test'
 prog = 'ghi'
 
-
 def test_commands():
     for cmd, exp in test_input:
         def check_command(cmd, exp):
@@ -32,6 +31,7 @@ test_input = (
     ('list -s open', None), ('list -s o', None), ('list -s closed', None),
     ('list -s c', None), ('list -s all', None), ('list -s a', None),
     ('-s a', None), ('-s a -v', None), ('list -s close', SystemExit),
+    ('list -u bobdole', None),
 
     # show commands
     ('show 1', None), ('1', None), ('17288182', "error: server problem (HTTP"\
