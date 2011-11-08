@@ -12,19 +12,12 @@ pip
 
   $ pip install github-cli
 
-easy_install
-============
-
-::
-
-  $ easy_install github-cli
-
 source
 ======
 
 ::
 
-  $ pip install -e git://github.com/jsmits/github-cli.git#egg=github-cli
+  $ pip install git+http://github.com/jsmits/github-cli
 
 *or*
 
@@ -55,7 +48,7 @@ GitHub
 ======
 
 Of course, you can always get the latest source code from the 
-`git repository <http://github.com/jsmits/github-cli/>`_:
+`git repository <https://github.com/jsmits/github-cli/>`_:
 
 ::
 

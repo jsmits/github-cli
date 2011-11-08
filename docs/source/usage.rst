@@ -20,6 +20,8 @@ the -r option, commands can be invoked from anywhere):
   ghi -v                              same as: ghi list -v
   ghi [-s o|c] -w                     show issues' GitHub page in web browser
                                       (default: open)
+  ghi list -u <github_user>           show issues created by specified user
+  
   ghi show <nr>                       show issue <nr>
   ghi show <nr> -v                    same as above, but with comments
   ghi <nr>                            same as: ghi show <nr>
@@ -57,6 +59,8 @@ the -r option, commands can be invoked from anywhere):
                           specify state (only for list and search (except `all`)
                           commands) choices are: open (o), closed (c), all (a)
                           [default: open]
+    -u CREATED_BY, --user=CREATED_BY
+                          issues created by <github_username> [default: all]
     -m MESSAGE, --message=MESSAGE
                           message content for opening or commenting on an issue
                           without using the editor

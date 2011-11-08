@@ -6,7 +6,7 @@ about
 *****
 `github-cli <http://packages.python.org/github-cli/>`_ provides an 
 executable called ``ghi``, that can be used to access all of `GitHub 
-<http://www.github.com/>`_'s documented `Issues API 
+<https://github.com/>`_'s documented `Issues API 
 <http://develop.github.com/p/issues.html>`_ (v2) functionality from your 
 command-line
 
@@ -24,17 +24,11 @@ installation
 
   pip install github-cli
 
-**easy_install**
-
-::
-
-  easy_install github-cli
-
 **from source**
 
 ::
 
-  pip install -e git://github.com/jsmits/github-cli.git#egg=github-cli
+  pip install git+http://github.com/jsmits/github-cli
 
 *or*
 
@@ -78,6 +72,8 @@ the -r option, commands can be invoked from anywhere):
   ghi -v                              same as: ghi list -v
   ghi [-s o|c] -w                     show issues' GitHub page in web browser
                                       (default: open)
+  ghi list -u <github_user>           show issues created by specified user
+  
   ghi show <nr>                       show issue <nr>
   ghi show <nr> -v                    same as above, but with comments
   ghi <nr>                            same as: ghi show <nr>
@@ -115,6 +111,8 @@ the -r option, commands can be invoked from anywhere):
                           specify state (only for list and search (except `all`)
                           commands) choices are: open (o), closed (c), all (a)
                           [default: open]
+    -u CREATED_BY, --user=CREATED_BY
+                          issues created by <github_username> [default: all]
     -m MESSAGE, --message=MESSAGE
                           message content for opening or commenting on an issue
                           without using the editor
@@ -126,4 +124,3 @@ the -r option, commands can be invoked from anywhere):
                           show issue(s) GitHub page in web browser (only for
                           list and show commands) [default: False]
     -V, --version         show program's version number and exit
-  
