@@ -2,6 +2,11 @@
 GitHub Issues API v2 - command-line interface
 =============================================
 
+**IMPORTANT**: github-cli does not function anymore since API v2 has been 
+replaced by `API v3 <http://developer.github.com/v3/issues/>`_. 
+A possible alternative for github-cli that addresses API v3 is Stephen 
+Celis' `ghi <https://github.com/stephencelis/ghi>`_.
+
 about
 *****
 `github-cli <http://github-cli.readthedocs.org/>`_ provides an 
